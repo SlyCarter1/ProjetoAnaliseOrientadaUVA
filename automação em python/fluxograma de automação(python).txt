@@ -1,0 +1,25 @@
+[ Início do Script Python ]
+       │
+       ▼
+[ Carregar Configurações & Testar Conexão com a API REST ]
+(Backend Spring Boot gerenciado via `OngController` / Docker)
+       │
+       ▼
+[ Menu de Operações da Automacão EduMais ]
+       │
+       ├──► 1. Cadastro de Aluno / Matrícula
+       │     └── Envia requisição HTTP POST para o endpoint do `OngController`
+       │         └── Persistido no banco de dados através do `AlunoRepository`
+       │
+       ├──► 2. Registro de Frequência ou Acompanhamento Pedagógico
+       │     └── Envia dados estruturados via DTO (`Dtos.java`)
+       │         └── Processado e salvo pelo `RegistroRepository`
+       │
+       └──► 3. Consulta de Dados
+             └── Executa requisições HTTP GET na API para relatórios e acompanhamentos[cite: 4]
+       │
+       ▼
+[ Validar Retorno da API (Status Code / JSON) ]
+       │
+       ▼
+[ Fim do Ciclo ou Nova Operação ]
