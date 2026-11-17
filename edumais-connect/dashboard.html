@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Painel | EduMais Connect</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo</a>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Menu do aluno">
+                <a href="dashboard.html" class="sidebar-link active" aria-current="page">
+                    <span aria-hidden="true">🏠</span> Meu Painel
+                </a>
+            </nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                <span aria-hidden="true">↪</span> Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1 id="saudacaoAluno">Olá, estudante!</h1>
+                    <p>Acompanhe suas turmas, frequência e evolução na EduMais.</p>
+                </div>
+            </header>
+
+            <section class="dashboard-section" aria-labelledby="tituloResumoAluno">
+                <h2 id="tituloResumoAluno">Meu resumo</h2>
+
+                <div class="dashboard-cards">
+                    <div class="dashboard-card">
+                        <span aria-hidden="true">📚</span>
+                        <h3 id="alunoTotalTurmas">0</h3>
+                        <p>Turmas matriculadas</p>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span aria-hidden="true">📅</span>
+                        <h3 id="alunoTotalPresencas">0</h3>
+                        <p>Presenças registradas</p>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span aria-hidden="true">📈</span>
+                        <h3 id="alunoTotalAcompanhamentos">0</h3>
+                        <p>Registros pedagógicos</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-section" aria-labelledby="tituloMinhasTurmas">
+                <h2 id="tituloMinhasTurmas">Minhas turmas</h2>
+
+                <div class="table-wrapper" id="wrapperTurmasAluno" hidden>
+                    <table class="data-table">
+                        <caption class="sr-only">Turmas em que você está matriculado</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Turma / Atividade</th>
+                                <th scope="col">Horário</th>
+                                <th scope="col">Data da matrícula</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaTurmasAluno"></tbody>
+                    </table>
+                </div>
+
+                <div class="state-box" id="estadoSemTurmasAluno" hidden>
+                    <h2>Você ainda não está matriculado em nenhuma turma</h2>
+                    <p>Entre em contato com a equipe da EduMais para realizar sua matrícula.</p>
+                </div>
+            </section>
+
+            <section class="dashboard-section" aria-labelledby="tituloMeuAcompanhamento">
+                <h2 id="tituloMeuAcompanhamento">Meu acompanhamento pedagógico</h2>
+
+                <div class="table-wrapper" id="wrapperAcompAluno" hidden>
+                    <table class="data-table">
+                        <caption class="sr-only">Observações dos professores sobre seu desenvolvimento</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Data</th>
+                                <th scope="col">Tema trabalhado</th>
+                                <th scope="col">Observação do educador</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaAcompAluno"></tbody>
+                    </table>
+                </div>
+
+                <div class="state-box" id="estadoSemAcompAluno" hidden>
+                    <h2>Nenhum registro de acompanhamento ainda</h2>
+                    <p>As anotações dos educadores sobre o seu progresso aparecerão aqui.</p>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="utilitarios.js"></script>
+    <script src="dados.js"></script>
+    <script src="dashboard.js"></script>
+
+</body>
+</html>

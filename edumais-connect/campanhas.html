@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campanhas e Doações | EduMais Connect</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo</a>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Menu da equipe">
+                <a href="dashboard-equipe.html" class="sidebar-link">
+                    <span aria-hidden="true">🏠</span> Visão geral
+                </a>
+                <a href="alunos.html" class="sidebar-link">
+                    <span aria-hidden="true">👨‍🎓</span> Alunos
+                </a>
+                <a href="turmas.html" class="sidebar-link">
+                    <span aria-hidden="true">📚</span> Turmas
+                </a>
+                <a href="matriculas.html" class="sidebar-link">
+                    <span aria-hidden="true">📝</span> Matrículas
+                </a>
+                <a href="frequencia.html" class="sidebar-link">
+                    <span aria-hidden="true">📅</span> Frequência
+                </a>
+                <a href="acompanhamento.html" class="sidebar-link">
+                    <span aria-hidden="true">📈</span> Acompanhamento
+                </a>
+                <a href="campanhas.html" class="sidebar-link active" aria-current="page">
+                    <span aria-hidden="true">🎁</span> Campanhas
+                </a>
+            </nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                <span aria-hidden="true">↪</span> Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Campanhas e Arrecadações</h1>
+                    <p>Cadastre campanhas de doação, defina metas e acompanhe o progresso dos recursos.</p>
+                </div>
+            </header>
+
+            <section class="form-card" aria-labelledby="tituloNovaCampanha">
+                <h2 id="tituloNovaCampanha">Nova campanha</h2>
+
+                <form id="campanhaForm" novalidate>
+                    <div class="form-grid">
+
+                        <div class="form-field" style="grid-column: 1 / -1;">
+                            <label for="campanhaNome">Título da campanha</label>
+                            <input type="text" id="campanhaNome" maxlength="120" autocomplete="off"
+                                   required aria-describedby="erroNome" placeholder="Ex.: Campanha de Material Escolar 2026">
+                            <p class="field-error" id="erroNome"></p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="campanhaMeta">Meta de arrecadação (R$)</label>
+                            <input type="number" id="campanhaMeta" min="1" step="0.01" inputmode="decimal"
+                                   required aria-describedby="erroMeta" placeholder="Ex.: 5000.00">
+                            <p class="field-error" id="erroMeta"></p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="campanhaPrazo">Prazo final</label>
+                            <input type="date" id="campanhaPrazo" required aria-describedby="erroPrazo">
+                            <p class="field-error" id="erroPrazo"></p>
+                        </div>
+
+                        <div class="form-field" style="grid-column: 1 / -1;">
+                            <label for="campanhaDescricao">Descrição e objetivos</label>
+                            <textarea id="campanhaDescricao" rows="3" maxlength="400" required
+                                      aria-describedby="erroDescricao" placeholder="Descreva para onde serão destinados os recursos..."></textarea>
+                            <p class="field-error" id="erroDescricao"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">Cadastrar campanha</button>
+                        <p class="form-message" id="campanhaMensagem" role="status"></p>
+                    </div>
+                </form>
+            </section>
+
+            <section class="dashboard-section" aria-labelledby="tituloLista">
+                <h2 id="tituloLista">Campanhas ativas</h2>
+
+                <form class="toolbar" id="buscaForm" role="search">
+                    <div class="toolbar-field">
+                        <label for="buscaCampanha">Pesquisar por título ou descrição</label>
+                        <input type="search" id="buscaCampanha" autocomplete="off"
+                               placeholder="Digite para pesquisar">
+                    </div>
+                </form>
+
+                <p class="results-summary" id="resumoResultados" aria-live="polite"></p>
+
+                <div class="table-wrapper" id="tabelaWrapper" hidden>
+                    <table class="data-table">
+                        <caption class="sr-only">Lista de campanhas cadastradas</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Campanha</th>
+                                <th scope="col">Meta</th>
+                                <th scope="col">Prazo</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaCampanhas"></tbody>
+                    </table>
+                </div>
+
+                <div class="state-box" id="estadoVazio" hidden>
+                    <h2>Nenhuma campanha cadastrada</h2>
+                    <p>Use o formulário acima para criar a primeira campanha da ONG.</p>
+                </div>
+
+                <div class="state-box" id="estadoSemResultado" hidden>
+                    <h2>Nenhuma campanha encontrada</h2>
+                    <p>Tente pesquisar por outro termo.</p>
+                </div>
+
+                <div class="state-box error" id="estadoErro" role="alert" hidden>
+                    <h2>Não foi possível carregar os dados</h2>
+                    <p>Os dados salvos no navegador parecem estar com problema.</p>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="utilitarios.js"></script>
+    <script src="dados.js"></script>
+    <script src="campanhas.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alunos | EduMais Connect</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo</a>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Menu da equipe">
+    <a href="dashboard-equipe.html" class="sidebar-link">
+        <span aria-hidden="true">🏠</span> Visão geral
+    </a>
+    <a href="alunos.html" class="sidebar-link">
+        <span aria-hidden="true">👨‍🎓</span> Alunos
+    </a>
+    <a href="turmas.html" class="sidebar-link">
+        <span aria-hidden="true">📚</span> Turmas
+    </a>
+    <a href="matriculas.html" class="sidebar-link">
+        <span aria-hidden="true">📝</span> Matrículas
+    </a>
+    <a href="frequencia.html" class="sidebar-link">
+        <span aria-hidden="true">📅</span> Frequência
+    </a>
+    <a href="acompanhamento.html" class="sidebar-link">
+        <span aria-hidden="true">📈</span> Acompanhamento
+    </a>
+    <a href="campanhas.html" class="sidebar-link">
+        <span aria-hidden="true">🎁</span> Campanhas
+    </a>
+</nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                <span aria-hidden="true">↪</span> Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Alunos</h1>
+                    <p>Consulte os alunos cadastrados e os dados dos responsáveis.</p>
+                </div>
+            </header>
+
+            <section aria-labelledby="tituloFiltros">
+
+                <h2 id="tituloFiltros" class="sr-only">Pesquisa e filtros</h2>
+
+                <form class="toolbar" id="filtrosForm" role="search">
+
+                    <div class="toolbar-field">
+                        <label for="buscaAluno">Pesquisar por nome ou e-mail</label>
+                        <input type="search" id="buscaAluno" autocomplete="off"
+                               placeholder="Digite para pesquisar">
+                    </div>
+
+                    <div class="toolbar-field">
+                        <label for="filtroIdade">Faixa de idade</label>
+                        <select id="filtroIdade">
+                            <option value="todos">Todos</option>
+                            <option value="menores">Menores de 18 anos</option>
+                            <option value="maiores">18 anos ou mais</option>
+                        </select>
+                    </div>
+
+                </form>
+
+                <p class="results-summary" id="resumoResultados" aria-live="polite"></p>
+
+                <div class="table-wrapper" id="tabelaWrapper" hidden>
+                    <table class="data-table">
+                        <caption class="sr-only">Lista de alunos cadastrados</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Idade</th>
+                                <th scope="col">E-mail</th>
+                                <th scope="col">Detalhes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaAlunos"></tbody>
+                    </table>
+                </div>
+
+                <div class="state-box" id="estadoVazio" hidden>
+                    <h2>Nenhum aluno cadastrado ainda</h2>
+                    <p>Quando alguém se cadastrar como aluno, ele aparecerá aqui.</p>
+                </div>
+
+                <div class="state-box" id="estadoSemResultado" hidden>
+                    <h2>Nenhum aluno encontrado</h2>
+                    <p>Tente pesquisar por outro nome ou mudar o filtro de idade.</p>
+                </div>
+
+                <div class="state-box error" id="estadoErro" role="alert" hidden>
+                    <h2>Não foi possível carregar os alunos</h2>
+                    <p>Os dados salvos no navegador parecem estar com problema. Avise a equipe técnica.</p>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <dialog class="details-dialog" id="detalhesDialog" aria-labelledby="detalhesTitulo">
+
+        <div class="details-header">
+            <h2 id="detalhesTitulo">Aluno</h2>
+            <button type="button" class="close-button" id="fecharDetalhes">Fechar</button>
+        </div>
+
+        <div class="details-body">
+
+            <h3>Dados do aluno</h3>
+            <dl class="details-list">
+                <dt>Nome</dt>
+                <dd id="detNome"></dd>
+                <dt>E-mail</dt>
+                <dd id="detEmail"></dd>
+                <dt>Nascimento</dt>
+                <dd id="detNascimento"></dd>
+                <dt>Idade</dt>
+                <dd id="detIdade"></dd>
+                <dt>Telefone</dt>
+                <dd id="detTelefone"></dd>
+            </dl>
+
+            <h3>Responsável</h3>
+            <dl class="details-list">
+                <dt>Nome</dt>
+                <dd id="detRespNome"></dd>
+                <dt>Telefone</dt>
+                <dd id="detRespTelefone"></dd>
+            </dl>
+
+        </div>
+
+    </dialog>
+
+    <script src="utilitarios.js"></script>
+    <script src="alunos.js"></script>
+
+</body>
+</html>

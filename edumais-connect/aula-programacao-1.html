@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 1 - O que é programação | EduMais Connect</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dashboard-page">
+
+    <main class="dashboard-content">
+
+        <a href="curso-programacao.html" class="back-link">
+            ← Voltar ao curso
+        </a>
+
+        <header class="course-header">
+            <span>Módulo 1 — Introdução à Programação</span>
+            <h1>Aula 1: O que é programação?</h1>
+            <p>
+                Entenda o que significa programar e como a tecnologia
+                utiliza instruções para realizar tarefas.
+            </p>
+        </header>
+
+        <section class="lesson-content">
+
+            <h2>1. O que é programação?</h2>
+
+            <p>
+                Programação é o processo de criar instruções para que
+                um computador execute determinadas tarefas.
+                Essas instruções são escritas utilizando linguagens
+                de programação.
+            </p>
+
+            <p>
+                Por exemplo, quando você utiliza um aplicativo de
+                mensagens, existe um conjunto de códigos responsável
+                por enviar, receber e organizar as mensagens.
+            </p>
+
+            <h2>2. Como funciona?</h2>
+
+            <p>
+                O computador não entende nossas intenções sozinho.
+                Precisamos fornecer instruções claras e organizadas
+                para que ele saiba o que fazer.
+            </p>
+
+            <p>
+                Podemos comparar a programação com uma receita:
+                cada etapa precisa ser seguida na ordem correta
+                para chegar ao resultado esperado.
+            </p>
+
+            <h2>3. O que é uma linguagem de programação?</h2>
+
+            <p>
+                É uma linguagem utilizada para escrever instruções
+                que podem ser interpretadas ou executadas pelo
+                computador.
+            </p>
+
+            <p>Alguns exemplos são:</p>
+
+            <ul>
+                <li>Python</li>
+                <li>Java</li>
+                <li>JavaScript</li>
+                <li>C</li>
+            </ul>
+
+            <h2>4. Exemplo prático</h2>
+
+            <p>Observe este pequeno código em Python:</p>
+
+            <pre><code>print("Olá, mundo!")</code></pre>
+
+            <p>
+                Esse comando faz o computador exibir a mensagem
+                "Olá, mundo!" na tela.
+            </p>
+
+            <h2>5. Resumo da aula</h2>
+
+            <p>
+                Programar significa criar instruções para que
+                computadores realizem tarefas. As linguagens de
+                programação permitem que essas instruções sejam
+                escritas de maneira organizada.
+            </p>
+<div class="exercise-card">
+
+    <h2>6. Teste seus conhecimentos</h2>
+
+    <p>O que significa programar?</p>
+
+    <div class="exercise-options">
+
+        <button class="answer-option" data-answer="wrong">
+            A) Utilizar a internet para pesquisar informações.
+        </button>
+
+        <button class="answer-option" data-answer="correct">
+            B) Criar instruções para que o computador execute tarefas.
+        </button>
+
+        <button class="answer-option" data-answer="wrong">
+            C) Montar fisicamente um computador.
+        </button>
+
+        <button class="answer-option" data-answer="wrong">
+            D) Apenas utilizar aplicativos no celular.
+        </button>
+
+    </div>
+
+    <p id="exerciseFeedback"></p>
+
+</div>
+        </section>
+
+    </main>
+<script>
+    const answerOptions = document.querySelectorAll(".answer-option");
+    const exerciseFeedback = document.getElementById("exerciseFeedback");
+
+    answerOptions.forEach((button) => {
+        button.addEventListener("click", () => {
+
+            // Verificar a resposta escolhida
+            if (button.dataset.answer === "correct") {
+                exerciseFeedback.textContent =
+                    "Parabéns! Você acertou! Programar é criar instruções para o computador executar tarefas.";
+
+                exerciseFeedback.style.color = "green";
+// Recuperar o aluno que está logado
+const usuarioLogado = JSON.parse(
+    sessionStorage.getItem("eduMaisUsuarioLogado")
+);
+
+// Recuperar o progresso salvo
+const progresso = JSON.parse(
+    localStorage.getItem("eduMaisProgresso") || "{}"
+);
+
+// Criar um registro para o aluno, caso ainda não exista
+if (!progresso[usuarioLogado.email]) {
+    progresso[usuarioLogado.email] = [];
+}
+
+// Registrar a aula como concluída
+if (!progresso[usuarioLogado.email].includes("aula-programacao-1")) {
+    progresso[usuarioLogado.email].push("aula-programacao-1");
+}
+
+// Salvar o progresso
+localStorage.setItem(
+    "eduMaisProgresso",
+    JSON.stringify(progresso)
+);
+            } else {
+                exerciseFeedback.textContent =
+                    "Não foi dessa vez! Revise o conteúdo da aula e tente novamente.";
+
+                exerciseFeedback.style.color = "red";
+            }
+
+        });
+    });
+</script>
+</body>
+</html>

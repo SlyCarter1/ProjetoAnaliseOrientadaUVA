@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acompanhamento Acadêmico | EduMais Connect</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo</a>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Menu da equipe">
+    <a href="dashboard-equipe.html" class="sidebar-link">
+        <span aria-hidden="true">🏠</span> Visão geral
+    </a>
+    <a href="alunos.html" class="sidebar-link">
+        <span aria-hidden="true">👨‍🎓</span> Alunos
+    </a>
+    <a href="turmas.html" class="sidebar-link">
+        <span aria-hidden="true">📚</span> Turmas
+    </a>
+    <a href="matriculas.html" class="sidebar-link">
+        <span aria-hidden="true">📝</span> Matrículas
+    </a>
+    <a href="frequencia.html" class="sidebar-link">
+        <span aria-hidden="true">📅</span> Frequência
+    </a>
+    <a href="acompanhamento.html" class="sidebar-link">
+        <span aria-hidden="true">📈</span> Acompanhamento
+    </a>
+    <a href="campanhas.html" class="sidebar-link">
+        <span aria-hidden="true">🎁</span> Campanhas
+    </a>
+</nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                <span aria-hidden="true">↪</span> Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Acompanhamento Acadêmico</h1>
+                    <p>Registre e consulte o histórico de evolução, temas trabalhados e observações dos estudantes.</p>
+                </div>
+            </header>
+
+            <section class="form-card" aria-labelledby="tituloNovoRegistro">
+                <h2 id="tituloNovoRegistro">Novo registro de acompanhamento</h2>
+
+                <form id="acompanhamentoForm" novalidate>
+                    <div class="form-grid">
+
+                        <div class="form-field">
+                            <label for="acompanhamentoAluno">Aluno</label>
+                            <select id="acompanhamentoAluno" required aria-describedby="erroAluno">
+                                <option value="">Selecione um aluno</option>
+                            </select>
+                            <p class="field-error" id="erroAluno"></p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="acompanhamentoData">Data do registro</label>
+                            <input type="date" id="acompanhamentoData" required aria-describedby="erroData">
+                            <p class="field-error" id="erroData"></p>
+                        </div>
+
+                        <div class="form-field" style="grid-column: 1 / -1;">
+                            <label for="acompanhamentoTema">Tema trabalhado / Atividade</label>
+                            <input type="text" id="acompanhamentoTema" maxlength="150" autocomplete="off"
+                                   required aria-describedby="erroTema" placeholder="Ex.: Introdução ao HTML e Estrutura Básica">
+                            <p class="field-error" id="erroTema"></p>
+                        </div>
+
+                        <div class="form-field" style="grid-column: 1 / -1;">
+                            <label for="acompanhamentoObs">Observações sobre o progresso</label>
+                            <textarea id="acompanhamentoObs" rows="4" maxlength="500" required
+                                      aria-describedby="erroObs" placeholder="Descreva o desenvolvimento, participação e pontos de atenção do aluno..."></textarea>
+                            <p class="field-error" id="erroObs"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">Salvar registro</button>
+                        <p class="form-message" id="acompanhamentoMensagem" role="status"></p>
+                    </div>
+                </form>
+            </section>
+
+            <section class="dashboard-section" aria-labelledby="tituloHistorico">
+                <h2 id="tituloHistorico">Histórico de acompanhamentos</h2>
+
+                <form class="toolbar" id="buscaForm" role="search">
+                    <div class="toolbar-field">
+                        <label for="buscaAcompanhamento">Pesquisar por nome do aluno ou tema</label>
+                        <input type="search" id="buscaAcompanhamento" autocomplete="off"
+                               placeholder="Digite para pesquisar">
+                    </div>
+                </form>
+
+                <p class="results-summary" id="resumoResultados" aria-live="polite"></p>
+
+                <div class="table-wrapper" id="tabelaWrapper" hidden>
+                    <table class="data-table">
+                        <caption class="sr-only">Histórico de acompanhamento acadêmico dos alunos</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Data</th>
+                                <th scope="col">Aluno</th>
+                                <th scope="col">Tema</th>
+                                <th scope="col">Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaAcompanhamentos"></tbody>
+                    </table>
+                </div>
+
+                <div class="state-box" id="estadoVazio" hidden>
+                    <h2>Nenhum registro encontrado</h2>
+                    <p>Use o formulário acima para adicionar o primeiro acompanhamento acadêmico.</p>
+                </div>
+
+                <div class="state-box" id="estadoSemResultado" hidden>
+                    <h2>Nenhum resultado para a pesquisa</h2>
+                    <p>Tente buscar por outro termo.</p>
+                </div>
+
+                <div class="state-box error" id="estadoErro" role="alert" hidden>
+                    <h2>Não foi possível carregar os dados</h2>
+                    <p>Os dados salvos no navegador parecem estar com problema.</p>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="utilitarios.js"></script>
+    <script src="dados.js"></script>
+    <script src="acompanhamento.js"></script>
+
+</body>
+</html>

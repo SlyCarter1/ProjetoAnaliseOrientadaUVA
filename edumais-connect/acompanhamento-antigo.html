@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acompanhamento | EduMais Connect</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation">
+                <a href="dashboard-equipe.html" class="sidebar-link">🏠 Visão geral</a>
+                <a href="alunos.html" class="sidebar-link">👨‍🎓 Alunos</a>
+                <a href="turmas.html" class="sidebar-link">📚 Turmas</a>
+                <a href="matriculas.html" class="sidebar-link">📝 Matrículas</a>
+                <a href="frequencia.html" class="sidebar-link">📅 Frequência</a>
+                <a href="acompanhamento.html" class="sidebar-link active">📈 Acompanhamento</a>
+            </nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                ↪ Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content">
+
+            <header class="dashboard-header">
+                <h1>Acompanhamento dos alunos</h1>
+                <p>Acompanhe o desenvolvimento e a evolução dos estudantes.</p>
+            </header>
+
+            <section class="welcome-card">
+                <h2>Novo registro de acompanhamento</h2>
+                <p>Selecione um aluno e registre informações sobre seu desenvolvimento.</p>
+            </section>
+
+            <section class="dashboard-section">
+
+                <form id="acompanhamentoForm">
+
+                    <label for="alunoAcompanhamento">
+                        Selecionar aluno
+                    </label>
+
+                    <select id="alunoAcompanhamento" required>
+                        <option value="">Selecione um aluno</option>
+                    </select>
+
+                    <label for="categoriaAcompanhamento">
+                        Categoria
+                    </label>
+
+                    <select id="categoriaAcompanhamento" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="Desempenho">Desempenho</option>
+                        <option value="Participação">Participação</option>
+                        <option value="Dificuldades">Dificuldades</option>
+                        <option value="Evolução">Evolução</option>
+                    </select>
+
+                    <label for="observacaoAcompanhamento">
+                        Observações
+                    </label>
+
+                    <textarea
+                        id="observacaoAcompanhamento"
+                        rows="5"
+                        placeholder="Descreva o desenvolvimento do aluno..."
+                        required
+                    ></textarea>
+
+                    <button type="submit">
+                        Salvar acompanhamento
+                    </button>
+
+                    <p id="acompanhamentoMessage"></p>
+
+                </form>
+
+            </section>
+
+            <section class="dashboard-section">
+
+                <h2>Histórico de acompanhamentos</h2>
+
+                <label for="filtroAluno">
+                    Filtrar por aluno
+                </label>
+
+                <select id="filtroAluno">
+                    <option value="">Todos os alunos</option>
+                </select>
+
+                <div id="listaAcompanhamentos">
+                    <p>Nenhum acompanhamento registrado ainda.</p>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="acompanhamento.js"></script>
+
+</body>
+</html>

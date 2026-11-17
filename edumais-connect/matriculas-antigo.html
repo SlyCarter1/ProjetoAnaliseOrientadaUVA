@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrículas | EduMais Connect</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <div class="dashboard-container">
+
+       
+<aside class="sidebar">
+
+    <div class="dashboard-logo">
+        ✦ EduMais <span>Connect</span>
+    </div>
+
+    <nav class="sidebar-navigation">
+
+        <a href="dashboard-equipe.html" class="sidebar-link">
+            🏠 Visão geral
+        </a>
+
+        <a href="alunos.html" class="sidebar-link">
+            👨‍🎓 Alunos
+        </a>
+
+        <a href="turmas.html" class="sidebar-link">
+            📚 Turmas
+        </a>
+
+        <a href="matriculas.html" class="sidebar-link active">
+            📝 Matrículas
+        </a>
+
+        <a href="frequencia.html" class="sidebar-link">
+            📅 Frequência
+        </a>
+
+        <a href="acompanhamento.html" class="sidebar-link">
+            📈 Acompanhamento
+        </a>
+
+    </nav>
+
+    <a href="login.html" class="logout-button" id="logoutButton">
+        ↪ Sair da plataforma
+    </a>
+
+</aside>
+
+
+        <main class="dashboard-content">
+
+            <header class="dashboard-header">
+                <h1>Gerenciamento de matrículas</h1>
+                <p>Organize os alunos e suas respectivas turmas.</p>
+            </header>
+
+            <section class="welcome-card">
+                <h2>Nova matrícula</h2>
+                <p>
+                    Selecione um aluno e uma turma para realizar
+                    uma nova matrícula.
+                </p>
+            </section>
+
+            <section class="dashboard-section">
+
+                <form id="matriculaForm">
+
+                    <label for="alunoMatricula">Selecionar aluno</label>
+                    <select id="alunoMatricula" required>
+                        <option value="">Selecione um aluno</option>
+                    </select>
+
+                    <label for="turmaMatricula">Selecionar turma</label>
+                    <select id="turmaMatricula" required>
+                        <option value="">Selecione uma turma</option>
+                    </select>
+
+                    <button type="submit">Realizar matrícula</button>
+
+                    <p id="matriculaMessage"></p>
+
+                </form>
+
+            </section>
+
+            <section class="dashboard-section">
+
+                <h2>Matrículas realizadas</h2>
+
+                <div id="listaMatriculas">
+                    <p>Nenhuma matrícula realizada ainda.</p>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="matriculas.js"></script>
+
+</body>
+</html>

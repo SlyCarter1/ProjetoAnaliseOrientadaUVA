@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequência | EduMais Connect</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation">
+                <a href="dashboard-equipe.html" class="sidebar-link">🏠 Visão geral</a>
+                <a href="alunos.html" class="sidebar-link">👨‍🎓 Alunos</a>
+                <a href="turmas.html" class="sidebar-link">📚 Turmas</a>
+                <a href="matriculas.html" class="sidebar-link">📝 Matrículas</a>
+                <a href="frequencia.html" class="sidebar-link active">📅 Frequência</a>
+                <a href="acompanhamento.html" class="sidebar-link">📈 Acompanhamento</a>
+            </nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                ↪ Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content">
+
+            <header class="dashboard-header">
+                <h1>Controle de frequência</h1>
+                <p>Registre a presença dos alunos nas aulas.</p>
+            </header>
+
+            <section class="welcome-card">
+                <h2>Registrar frequência</h2>
+                <p>Selecione uma turma e uma data para registrar a presença dos alunos.</p>
+            </section>
+
+            <section class="dashboard-section">
+
+                <label for="turmaFrequencia">Selecionar turma</label>
+                <select id="turmaFrequencia">
+                    <option value="">Selecione uma turma</option>
+                </select>
+
+                <br><br>
+
+                <label for="dataFrequencia">Data da aula</label>
+                <input type="date" id="dataFrequencia">
+
+                <br><br>
+
+                <div id="listaFrequencia">
+                    <p>Selecione uma turma para visualizar os alunos.</p>
+                </div>
+
+                <button type="button" id="salvarFrequencia">
+                    Salvar frequência
+                </button>
+
+                <p id="frequenciaMessage"></p>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="frequencia.js"></script>
+
+</body>
+</html>

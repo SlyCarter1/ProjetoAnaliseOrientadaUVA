@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Frequência | EduMais Connect</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+            <a href="index.html" class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </a>
+
+            <nav class="sidebar-navigation">
+                <a href="dashboard.html" class="sidebar-link">
+                    🏠 Início
+                </a>
+
+                <a href="dashboard.html" class="sidebar-link">
+                    📚 Meus cursos
+                </a>
+
+                <a href="frequencia-aluno.html" class="sidebar-link active">
+                    📅 Minha frequência
+                </a>
+
+                <a href="dashboard.html" class="sidebar-link">
+                    👤 Meu perfil
+                </a>
+            </nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                ↪ Sair da plataforma
+            </a>
+        </aside>
+
+        <main class="dashboard-content">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Minha frequência 📅</h1>
+                    <p>Acompanhe suas presenças e faltas nas aulas.</p>
+                </div>
+            </header>
+
+            <section class="dashboard-section">
+                <div class="dashboard-card">
+                    <h2>Resumo da frequência</h2>
+
+                    <p>Total de aulas: <strong id="totalAulas">0</strong></p>
+                    <p>Presenças: <strong id="totalPresencas">0</strong></p>
+                    <p>Faltas: <strong id="totalFaltas">0</strong></p>
+                    <p>Frequência: <strong id="percentualFrequencia">0%</strong></p>
+                </div>
+            </section>
+
+            <section class="dashboard-section">
+                <h2>Histórico de aulas</h2>
+
+                <div id="historicoFrequencia">
+                    <p>Nenhum registro de frequência encontrado.</p>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="frequencia-aluno.js"></script>
+
+</body>
+</html>

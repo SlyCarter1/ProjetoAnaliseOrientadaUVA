@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel da Equipe | EduMais Connect</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation">
+    <a href="dashboard-equipe.html" class="sidebar-link">🏠 Visão geral</a>
+    <a href="alunos.html" class="sidebar-link">👨‍🎓 Alunos</a>
+    <a href="turmas.html" class="sidebar-link">📚 Turmas</a>
+    <a href="matriculas.html" class="sidebar-link">📝 Matrículas</a>
+    <a href="frequencia.html" class="sidebar-link">📅 Frequência</a>
+    <a href="acompanhamento.html" class="sidebar-link">📈 Acompanhamento</a>
+    <a href="campanhas.html" class="sidebar-link active">📢 Campanhas</a>
+</nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                ↪ Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content">
+
+            <header class="dashboard-header">
+                <h1 id="teamGreeting">Painel da equipe</h1>
+                <p>Gerencie as atividades e os alunos da EduMais.</p>
+            </header>
+
+            <section class="welcome-card">
+                <h2>Bem-vindo à área administrativa!</h2>
+                <p>
+                    Aqui você poderá organizar os alunos, controlar as turmas,
+                    registrar frequências e acompanhar o desenvolvimento dos estudantes.
+                </p>
+            </section>
+
+            <section class="dashboard-section">
+
+                <h2>Resumo da organização</h2>
+
+                <div class="dashboard-cards">
+
+                    <div class="dashboard-card">
+                        <span>👨‍🎓</span>
+                        <h3 id="totalAlunos">0</h3>
+                        <p>Alunos cadastrados</p>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span>📚</span>
+                        <h3 id="totalTurmas">0</h3>
+                        <p>Turmas cadastradas</p>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <span>📝</span>
+                        <h3 id="totalMatriculas">0</h3>
+                        <p>Matrículas realizadas</p>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="dashboard-equipe.js"></script>
+
+</body>
+</html>

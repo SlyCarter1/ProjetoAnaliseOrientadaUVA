@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequência | EduMais Connect</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo</a>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Menu da equipe">
+    <a href="dashboard-equipe.html" class="sidebar-link">
+        <span aria-hidden="true">🏠</span> Visão geral
+    </a>
+    <a href="alunos.html" class="sidebar-link">
+        <span aria-hidden="true">👨‍🎓</span> Alunos
+    </a>
+    <a href="turmas.html" class="sidebar-link">
+        <span aria-hidden="true">📚</span> Turmas
+    </a>
+    <a href="matriculas.html" class="sidebar-link">
+        <span aria-hidden="true">📝</span> Matrículas
+    </a>
+    <a href="frequencia.html" class="sidebar-link">
+        <span aria-hidden="true">📅</span> Frequência
+    </a>
+    <a href="acompanhamento.html" class="sidebar-link">
+        <span aria-hidden="true">📈</span> Acompanhamento
+    </a>
+    <a href="campanhas.html" class="sidebar-link">
+        <span aria-hidden="true">🎁</span> Campanhas
+    </a>
+</nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                <span aria-hidden="true">↪</span> Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Controle de Frequência</h1>
+                    <p>Selecione a turma e a data para registrar ou consultar a presença dos alunos.</p>
+                </div>
+            </header>
+
+            <section class="form-card" aria-labelledby="tituloSelecao">
+                <h2 id="tituloSelecao">Selecionar aula</h2>
+
+                <form id="selecaoForm">
+                    <div class="form-grid">
+
+                        <div class="form-field">
+                            <label for="frequenciaTurma">Turma</label>
+                            <select id="frequenciaTurma" required aria-describedby="erroTurma">
+                                <option value="">Selecione uma turma</option>
+                            </select>
+                            <p class="field-error" id="erroTurma"></p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="frequenciaData">Data da aula</label>
+                            <input type="date" id="frequenciaData" required aria-describedby="erroData">
+                            <p class="field-error" id="erroData"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">Carregar chamada</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="dashboard-section" aria-labelledby="tituloChamada" id="secaoChamada" hidden>
+                <h2 id="tituloChamada">Lista de chamada</h2>
+
+                <form id="chamadaForm">
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <caption class="sr-only">Chamada de presença dos alunos da turma</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Aluno</th>
+                                    <th scope="col">E-mail</th>
+                                    <th scope="col" class="text-center">Presente</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaChamada"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 1.5rem;">
+                        <button type="submit" class="primary-button">Salvar frequência</button>
+                        <p class="form-message" id="chamadaMensagem" role="status"></p>
+                    </div>
+                </form>
+            </section>
+
+            <div class="state-box" id="estadoInstrucao">
+                <h2>Selecione uma turma e uma data</h2>
+                <p>Escolha a turma e o dia da aula acima para carregar a lista de alunos matriculados.</p>
+            </div>
+
+            <div class="state-box" id="estadoSemAlunos" hidden>
+                <h2>Nenhum aluno matriculado</h2>
+                <p>Esta turma ainda não possui alunos matriculados. Faça matrículas para poder registrar frequência.</p>
+            </div>
+
+            <div class="state-box error" id="estadoErro" role="alert" hidden>
+                <h2>Não foi possível carregar os dados</h2>
+                <p>Os dados salvos no navegador parecem estar com problema.</p>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="utilitarios.js"></script>
+    <script src="dados.js"></script>
+    <script src="frequencia.js"></script>
+
+</body>
+</html>

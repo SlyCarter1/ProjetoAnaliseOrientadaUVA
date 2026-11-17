@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turmas | EduMais Connect</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo</a>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Menu da equipe">
+    <a href="dashboard-equipe.html" class="sidebar-link">
+        <span aria-hidden="true">🏠</span> Visão geral
+    </a>
+    <a href="alunos.html" class="sidebar-link">
+        <span aria-hidden="true">👨‍🎓</span> Alunos
+    </a>
+    <a href="turmas.html" class="sidebar-link">
+        <span aria-hidden="true">📚</span> Turmas
+    </a>
+    <a href="matriculas.html" class="sidebar-link">
+        <span aria-hidden="true">📝</span> Matrículas
+    </a>
+    <a href="frequencia.html" class="sidebar-link">
+        <span aria-hidden="true">📅</span> Frequência
+    </a>
+    <a href="acompanhamento.html" class="sidebar-link">
+        <span aria-hidden="true">📈</span> Acompanhamento
+    </a>
+    <a href="campanhas.html" class="sidebar-link">
+        <span aria-hidden="true">🎁</span> Campanhas
+    </a>
+</nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                <span aria-hidden="true">↪</span> Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Turmas</h1>
+                    <p>Cadastre e consulte as turmas, horários, educadores e vagas.</p>
+                </div>
+            </header>
+
+            <section class="form-card" id="secaoNovaTurma" aria-labelledby="tituloNovaTurma">
+
+                <h2 id="tituloNovaTurma">Nova turma</h2>
+
+                <form id="turmaForm" novalidate>
+
+                    <div class="form-grid">
+
+                        <div class="form-field">
+                            <label for="turmaNome">Nome da turma</label>
+                            <input type="text" id="turmaNome" maxlength="100" autocomplete="off"
+                                   required aria-describedby="erroNome">
+                            <p class="field-error" id="erroNome"></p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="turmaCurso">Curso</label>
+                            <input type="text" id="turmaCurso" maxlength="100" autocomplete="off"
+                                   required aria-describedby="erroCurso">
+                            <p class="field-error" id="erroCurso"></p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="turmaVagas">Vagas</label>
+                            <input type="number" id="turmaVagas" min="1" step="1" inputmode="numeric"
+                                   required aria-describedby="erroVagas">
+                            <p class="field-error" id="erroVagas"></p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="turmaHorario">Horário</label>
+                            <input type="text" id="turmaHorario" maxlength="100" autocomplete="off"
+                                   required aria-describedby="erroHorario"
+                                   placeholder="Ex.: Terças, 14h às 16h">
+                            <p class="field-error" id="erroHorario"></p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="turmaEducador">Educador responsável</label>
+                            <input type="text" id="turmaEducador" maxlength="100" autocomplete="off"
+                                   required aria-describedby="erroEducador">
+                            <p class="field-error" id="erroEducador"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">Cadastrar turma</button>
+                        <p class="form-message" id="turmaMensagem" role="status"></p>
+                    </div>
+
+                </form>
+
+            </section>
+
+            <section class="dashboard-section" aria-labelledby="tituloLista">
+
+                <h2 id="tituloLista">Turmas cadastradas</h2>
+
+                <form class="toolbar" id="buscaForm" role="search">
+                    <div class="toolbar-field">
+                        <label for="buscaTurma">Pesquisar por turma, curso, horário ou educador</label>
+                        <input type="search" id="buscaTurma" autocomplete="off"
+                               placeholder="Digite para pesquisar">
+                    </div>
+                </form>
+
+                <p class="results-summary" id="resumoResultados" aria-live="polite"></p>
+
+                <div class="table-wrapper" id="tabelaWrapper" hidden>
+                    <table class="data-table">
+                        <caption class="sr-only">Lista de turmas cadastradas</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Turma</th>
+                                <th scope="col">Curso</th>
+                                <th scope="col">Horário</th>
+                                <th scope="col">Educador</th>
+                                <th scope="col">Vagas ocupadas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaTurmas"></tbody>
+                    </table>
+                </div>
+
+                <div class="state-box" id="estadoVazio" hidden>
+                    <h2>Nenhuma turma cadastrada ainda</h2>
+                    <p>Use o formulário acima para cadastrar a primeira turma.</p>
+                </div>
+
+                <div class="state-box" id="estadoSemResultado" hidden>
+                    <h2>Nenhuma turma encontrada</h2>
+                    <p>Tente pesquisar por outro termo.</p>
+                </div>
+
+                <div class="state-box error" id="estadoErro" role="alert" hidden>
+                    <h2>Não foi possível carregar as turmas</h2>
+                    <p>Os dados salvos no navegador parecem estar com problema. Avise a equipe técnica.</p>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="utilitarios.js"></script>
+    <script src="dados.js"></script>
+    <script src="turmas.js"></script>
+
+</body>
+</html>

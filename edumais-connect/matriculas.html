@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrículas | EduMais Connect</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-page">
+
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo</a>
+
+    <div class="dashboard-container">
+
+        <aside class="sidebar">
+
+            <div class="dashboard-logo">
+                ✦ EduMais <span>Connect</span>
+            </div>
+
+            <nav class="sidebar-navigation" aria-label="Menu da equipe">
+    <a href="dashboard-equipe.html" class="sidebar-link">
+        <span aria-hidden="true">🏠</span> Visão geral
+    </a>
+    <a href="alunos.html" class="sidebar-link">
+        <span aria-hidden="true">👨‍🎓</span> Alunos
+    </a>
+    <a href="turmas.html" class="sidebar-link">
+        <span aria-hidden="true">📚</span> Turmas
+    </a>
+    <a href="matriculas.html" class="sidebar-link">
+        <span aria-hidden="true">📝</span> Matrículas
+    </a>
+    <a href="frequencia.html" class="sidebar-link">
+        <span aria-hidden="true">📅</span> Frequência
+    </a>
+    <a href="acompanhamento.html" class="sidebar-link">
+        <span aria-hidden="true">📈</span> Acompanhamento
+    </a>
+    <a href="campanhas.html" class="sidebar-link">
+        <span aria-hidden="true">🎁</span> Campanhas
+    </a>
+</nav>
+
+            <a href="login.html" class="logout-button" id="logoutButton">
+                <span aria-hidden="true">↪</span> Sair da plataforma
+            </a>
+
+        </aside>
+
+        <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
+
+            <header class="dashboard-header">
+                <div>
+                    <h1>Gerenciamento de matrículas</h1>
+                    <p>Organize os alunos e suas respectivas turmas.</p>
+                </div>
+            </header>
+
+            <section class="form-card" aria-labelledby="tituloNovaMatricula">
+
+                <h2 id="tituloNovaMatricula">Nova matrícula</h2>
+
+                <p class="notice" id="avisoSemDados" hidden>
+                    Para matricular, é preciso ter ao menos um aluno e uma turma cadastrados.
+                    Os alunos se cadastram em <a href="cadastro.html">Cadastro</a> e as
+                    turmas ficam em <a href="turmas.html">Turmas</a>.
+                </p>
+
+                <form id="matriculaForm" novalidate>
+
+                    <div class="form-grid">
+
+                        <div class="form-field">
+                            <label for="matriculaAluno">Aluno</label>
+                            <select id="matriculaAluno" required aria-describedby="erroAluno"></select>
+                            <p class="field-error" id="erroAluno"></p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="matriculaTurma">Turma</label>
+                            <select id="matriculaTurma" required aria-describedby="erroTurma"></select>
+                            <p class="field-error" id="erroTurma"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button" id="matriculaBotao">Realizar matrícula</button>
+                        <p class="form-message" id="matriculaMensagem" role="status"></p>
+                    </div>
+
+                </form>
+
+            </section>
+
+            <section class="dashboard-section" aria-labelledby="tituloLista">
+
+                <h2 id="tituloLista">Matrículas realizadas</h2>
+
+                <form class="toolbar" id="buscaForm" role="search">
+                    <div class="toolbar-field">
+                        <label for="buscaMatricula">Pesquisar por aluno, turma ou curso</label>
+                        <input type="search" id="buscaMatricula" autocomplete="off"
+                               placeholder="Digite para pesquisar">
+                    </div>
+                </form>
+
+                <p class="results-summary" id="resumoResultados" aria-live="polite"></p>
+
+                <div class="table-wrapper" id="tabelaWrapper" hidden>
+                    <table class="data-table">
+                        <caption class="sr-only">Lista de matrículas realizadas</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Aluno</th>
+                                <th scope="col">Turma</th>
+                                <th scope="col">Curso</th>
+                                <th scope="col">Data</th>
+                                <th scope="col">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaMatriculas"></tbody>
+                    </table>
+                </div>
+
+                <div class="state-box" id="estadoVazio" hidden>
+                    <h2>Nenhuma matrícula realizada ainda</h2>
+                    <p>Use o formulário acima para matricular um aluno em uma turma.</p>
+                </div>
+
+                <div class="state-box" id="estadoSemResultado" hidden>
+                    <h2>Nenhuma matrícula encontrada</h2>
+                    <p>Tente pesquisar por outro termo.</p>
+                </div>
+
+                <div class="state-box error" id="estadoErro" role="alert" hidden>
+                    <h2>Não foi possível carregar os dados</h2>
+                    <p>Os dados salvos no navegador parecem estar com problema. Avise a equipe técnica.</p>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="utilitarios.js"></script>
+    <script src="dados.js"></script>
+    <script src="matriculas.js"></script>
+
+</body>
+</html>
