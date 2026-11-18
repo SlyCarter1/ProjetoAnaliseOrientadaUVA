@@ -45,3 +45,56 @@ CREATE TABLE IF NOT EXISTS edumais.matricula (
     criada_em       timestamptz NOT NULL DEFAULT now(),
     CHECK ((status = 'cancelada') = (cancelada_em IS NOT NULL))
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS uq_matricula_ativa_aluno_turma
+    ON edumais.matricula (aluno_id, turma_id) WHERE status = 'ativa';
+CREATE INDEX IF NOT EXISTS ix_matricula_turma_ativa
+    ON edumais.matricula (turma_id) WHERE status = 'ativa';
+
+-- Faça matrícula por esta função: bloqueio da turma impede ultrapassar vagas
+-- quando duas requisições concorrentes tentam ocupar a última vaga.
+CREATE OR REPLACE FUNCTION edumais.matricular(p_aluno_id bigint, p_turma_id bigint)
+RETURNS bigint
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, edumais
+AS $$
+DECLARE
+    v_vagas integer;
+    v_ocupadas integer;
+    v_id bigint;
+BEGIN
+    SELECT vagas_totais INTO v_vagas
+      FROM edumais.turma WHERE turma_id = p_turma_id AND ativa FOR UPDATE;
+    IF NOT FOUND THEN RAISE EXCEPTION 'Turma inexistente ou inativa'; END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM edumais.pessoa
+                   WHERE pessoa_id = p_aluno_id AND perfil = 'aluno' AND ativo) THEN
+        RAISE EXCEPTION 'Aluno inexistente ou inativo';
+    END IF;
+    SELECT count(*) INTO v_ocupadas FROM edumais.matricula
+      WHERE turma_id = p_turma_id AND status = 'ativa';
+    IF v_ocupadas >= v_vagas THEN RAISE EXCEPTION 'Turma sem vagas disponíveis'; END IF;
+
+    INSERT INTO edumais.matricula (aluno_id, turma_id)
+      VALUES (p_aluno_id, p_turma_id) RETURNING matricula_id INTO v_id;
+    RETURN v_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION edumais.cancelar_matricula(p_matricula_id bigint)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, edumais
+AS $$
+BEGIN
+    UPDATE edumais.matricula
+       SET status = 'cancelada', cancelada_em = now()
+     WHERE matricula_id = p_matricula_id AND status = 'ativa';
+    IF NOT FOUND THEN RAISE EXCEPTION 'Matrícula ativa não encontrada'; END IF;
+END;
+$$;
+
+-- Hash deve ser calculado no backend com algoritmo próprio para senhas
+-- (ex.: Argon2id/bcrypt); jamais armazene senha em texto puro.
