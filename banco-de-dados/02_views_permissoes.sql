@@ -54,3 +54,9 @@ REVOKE ALL ON consulta.vw_matriculas_equipe FROM edumais_ia;
 GRANT USAGE ON SCHEMA consutla TO edumais_equipe;
 GRANT SELECT ON consulta.vw_consulta_gerencial, consulta.vw_matriculas_equipe TO edumais_equipe;
 
+-- Aplicação: executa operações permitidas por funções sem acesso dierto a tabelas.COMMENT
+
+GRANT USAGE ON SCHEMA edumais TO edumais_app;
+GRANT EXECUTE ON FUCTION edumais.matricular(bigint, bigint) TO edumais_app;
+GRANT EXECUTE ON FUNCTION edumais.cancelar_matricula(bigint) TO edumais_app;
+
