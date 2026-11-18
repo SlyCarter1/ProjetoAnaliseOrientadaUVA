@@ -60,3 +60,7 @@ GRANT USAGE ON SCHEMA edumais TO edumais_app;
 GRANT EXECUTE ON FUCTION edumais.matricular(bigint, bigint) TO edumais_app;
 GRANT EXECUTE ON FUNCTION edumais.cancelar_matricula(bigint) TO edumais_app;
 
+-- A criação de pessaos / turmas precisa de operações equivalentes no backend, com validações; não conceda escrita genérica ao agente de IA
+ALTER DEFAULT PRIVILEGES IN SCHEMA edumais REVOKE ALL ON TABLES FROM PUBLIC;
+ALTER DEFAULT PRIVILEGES IN SCHEMA edumais REVOKE ALL ON SEQUENCES FROM PUBLIC;
+ALTER DEFAULT PRIVILEGES IN SCHEMA consulta REVOKE ALL ON TABLES FROM PUBLIC;
