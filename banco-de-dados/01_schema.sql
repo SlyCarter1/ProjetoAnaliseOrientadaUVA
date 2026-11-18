@@ -34,3 +34,14 @@ CREATE TABLE IF NOT EXISTS edumais.turma (
     criada_em       timestamptz NOT NULL DEFAULT now(),
     UNIQUE (nome, horario)
 );
+
+CREATE TABLE IF NOT EXISTS edumais.matricula (
+    matricula_id    bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    aluno_id        bigint NOT NULL REFERENCES edumais.pessoa(pessoa_id) ON DELETE RESTRICT,
+    turma_id        bigint NOT NULL REFERENCES edumais.turma(turma_id) ON DELETE RESTRICT,
+    data_matricula  date NOT NULL DEFAULT CURRENT_DATE,
+    status          varchar(15) NOT NULL DEFAULT 'ativa' CHECK (status IN ('ativa','cancelada')),
+    cancelada_em    timestamptz,
+    criada_em       timestamptz NOT NULL DEFAULT now(),
+    CHECK ((status = 'cancelada') = (cancelada_em IS NOT NULL))
+);
