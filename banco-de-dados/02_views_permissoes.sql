@@ -18,7 +18,7 @@ LEFT JOIN edumais.matricula AS m
 WHERE t.ativa
 GROUP BY t.turma_id, t.nome, t.curso, t.horario, t.vagas_totais;
 
--- visão opercaional ideentificavel, somente para equipe autorizada
+-- visão operacional ideentificavel, somente para equipe autorizada
 CREATE OR REPLACE VIEW consulta.vw_matriculas_equipe
 WITH (security_barrier = true) AS
 SELECT 
@@ -49,9 +49,9 @@ REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA edumais FROM PUBLIC;
 -- agente text-to-sql: leitura apenas da visão agregada, sem PII
 
 GRANT USAGE ON SCHEMA consulta TO edumais_ia;
-GRANT SELCT ON consulta.vw_consulta_gerencial TO edumais_ia;
+GRANT SELECT ON consulta.vw_consulta_gerencial TO edumais_ia;
 REVOKE ALL ON consulta.vw_matriculas_equipe FROM edumais_ia;
-GRANT USAGE ON SCHEMA consutla TO edumais_equipe;
+GRANT USAGE ON SCHEMA consulta TO edumais_equipe;
 GRANT SELECT ON consulta.vw_consulta_gerencial, consulta.vw_matriculas_equipe TO edumais_equipe;
 
 -- Aplicação: executa operações permitidas por funções sem acesso dierto a tabelas.COMMENT
