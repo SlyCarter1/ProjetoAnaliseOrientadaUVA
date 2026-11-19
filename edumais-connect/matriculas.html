@@ -6,6 +6,31 @@
     <title>Matrículas | EduMais Connect</title>
 
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .status-tag {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-tag.ativa { background: #dcfce7; color: #166534; }
+        .status-tag.cancelada { background: #fee2e2; color: #991b1b; }
+        .action-group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .table-button.danger { background-color: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+        .table-button.danger:hover { background-color: #fecaca; }
+        .ra-badge { font-family: monospace; font-weight: 700; color: #194d78; }
+        .inline-enroll-bar {
+            display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;
+            background: #f8fafc; padding: 14px; border-radius: 10px; margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+        }
+        .inline-enroll-bar .form-field { flex: 1; min-width: 220px; margin: 0; }
+        .modal-footer-actions {
+            display: flex; justify-content: flex-end; gap: 10px;
+            margin-top: 20px; padding-top: 14px; border-top: 1px solid #e2e8f0;
+        }
+    </style>
 </head>
 
 <body class="dashboard-page">
@@ -21,28 +46,31 @@
             </div>
 
             <nav class="sidebar-navigation" aria-label="Menu da equipe">
-    <a href="dashboard-equipe.html" class="sidebar-link">
-        <span aria-hidden="true">🏠</span> Visão geral
-    </a>
-    <a href="alunos.html" class="sidebar-link">
-        <span aria-hidden="true">👨‍🎓</span> Alunos
-    </a>
-    <a href="turmas.html" class="sidebar-link">
-        <span aria-hidden="true">📚</span> Turmas
-    </a>
-    <a href="matriculas.html" class="sidebar-link">
-        <span aria-hidden="true">📝</span> Matrículas
-    </a>
-    <a href="frequencia.html" class="sidebar-link">
-        <span aria-hidden="true">📅</span> Frequência
-    </a>
-    <a href="acompanhamento.html" class="sidebar-link">
-        <span aria-hidden="true">📈</span> Acompanhamento
-    </a>
-    <a href="campanhas.html" class="sidebar-link">
-        <span aria-hidden="true">🎁</span> Campanhas
-    </a>
-</nav>
+                <a href="dashboard-equipe.html" class="sidebar-link">
+                    <span aria-hidden="true">🏠</span> Visão geral
+                </a>
+                <a href="alunos.html" class="sidebar-link">
+                    <span aria-hidden="true">👨‍🎓</span> Alunos
+                </a>
+                <a href="turmas.html" class="sidebar-link">
+                    <span aria-hidden="true">📚</span> Turmas
+                </a>
+                <a href="matriculas.html" class="sidebar-link active" aria-current="page">
+                    <span aria-hidden="true">📝</span> Matrículas
+                </a>
+                <a href="frequencia.html" class="sidebar-link">
+                    <span aria-hidden="true">📅</span> Frequência
+                </a>
+                <a href="acompanhamento.html" class="sidebar-link">
+                    <span aria-hidden="true">📈</span> Acompanhamento
+                </a>
+                <a href="campanhas.html" class="sidebar-link">
+                    <span aria-hidden="true">🎁</span> Campanhas
+                </a>
+                <a href="agente.html" class="sidebar-link">
+                    <span aria-hidden="true">🤖</span> Agente IA
+                </a>
+            </nav>
 
             <a href="login.html" class="logout-button" id="logoutButton">
                 <span aria-hidden="true">↪</span> Sair da plataforma
@@ -64,9 +92,8 @@
                 <h2 id="tituloNovaMatricula">Nova matrícula</h2>
 
                 <p class="notice" id="avisoSemDados" hidden>
-                    Para matricular, é preciso ter ao menos um aluno e uma turma cadastrados.
-                    Os alunos se cadastram em <a href="cadastro.html">Cadastro</a> e as
-                    turmas ficam em <a href="turmas.html">Turmas</a>.
+                    Para matricular, é preciso ter ao menos um aluno ativo em <a href="alunos.html">Alunos</a>
+                    e uma turma cadastrada em <a href="turmas.html">Turmas</a>.
                 </p>
 
                 <form id="matriculaForm" novalidate>
@@ -74,13 +101,13 @@
                     <div class="form-grid">
 
                         <div class="form-field">
-                            <label for="matriculaAluno">Aluno</label>
+                            <label for="matriculaAluno">Aluno (RA e Nome)</label>
                             <select id="matriculaAluno" required aria-describedby="erroAluno"></select>
                             <p class="field-error" id="erroAluno"></p>
                         </div>
 
                         <div class="form-field">
-                            <label for="matriculaTurma">Turma</label>
+                            <label for="matriculaTurma">Turma (Vagas disponíveis)</label>
                             <select id="matriculaTurma" required aria-describedby="erroTurma"></select>
                             <p class="field-error" id="erroTurma"></p>
                         </div>
@@ -102,7 +129,7 @@
 
                 <form class="toolbar" id="buscaForm" role="search">
                     <div class="toolbar-field">
-                        <label for="buscaMatricula">Pesquisar por aluno, turma ou curso</label>
+                        <label for="buscaMatricula">Pesquisar por RA, aluno, turma ou curso</label>
                         <input type="search" id="buscaMatricula" autocomplete="off"
                                placeholder="Digite para pesquisar">
                     </div>
@@ -112,13 +139,14 @@
 
                 <div class="table-wrapper" id="tabelaWrapper" hidden>
                     <table class="data-table">
-                        <caption class="sr-only">Lista de matrículas realizadas</caption>
+                        <caption class="sr-only">Lista de alunos matriculados e suas turmas</caption>
                         <thead>
                             <tr>
-                                <th scope="col">Aluno</th>
-                                <th scope="col">Turma</th>
-                                <th scope="col">Curso</th>
-                                <th scope="col">Data</th>
+                                <th scope="col">Aluno / RA</th>
+                                <th scope="col">Turma(s)</th>
+                                <th scope="col">Curso / Horário</th>
+                                <th scope="col">Última atualização</th>
+                                <th scope="col">Situação</th>
                                 <th scope="col">Ação</th>
                             </tr>
                         </thead>
@@ -138,7 +166,7 @@
 
                 <div class="state-box error" id="estadoErro" role="alert" hidden>
                     <h2>Não foi possível carregar os dados</h2>
-                    <p>Os dados salvos no navegador parecem estar com problema. Avise a equipe técnica.</p>
+                    <p>Verifique se o servidor Python (porta 8001) e o PostgreSQL estão ativos.</p>
                 </div>
 
             </section>
@@ -147,8 +175,49 @@
 
     </div>
 
+    <!-- Modal Consolidado: Todas as turmas do aluno (Adicionar, Transferir, Cancelar) -->
+    <dialog class="details-dialog" id="gerenciarAlunoDialog" aria-labelledby="gerenciarAlunoTitulo" style="max-width: 820px; width: 92%;">
+        <div class="details-header">
+            <div>
+                <h2 id="gerenciarAlunoTitulo">Turmas do aluno</h2>
+                <p id="gerenciarAlunoSubtitulo" style="font-size: 0.9rem; color: #475569;"></p>
+            </div>
+            <button type="button" class="close-button" id="fecharGerenciarAluno">Fechar</button>
+        </div>
+
+        <div class="details-body">
+            <form id="adicionarTurmaModalForm" class="inline-enroll-bar">
+                <div class="form-field">
+                    <label for="modalNovaTurmaSelect">Matricular este aluno em mais uma turma</label>
+                    <select id="modalNovaTurmaSelect" required></select>
+                </div>
+                <button type="submit" class="primary-button" id="btnAdicionarTurmaModal">+ Adicionar turma</button>
+            </form>
+
+            <p id="modalAlunoFeedback" class="form-message" role="status" style="margin-bottom: 12px;"></p>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Turma</th>
+                            <th>Curso / Horário</th>
+                            <th>Data</th>
+                            <th>Situação</th>
+                            <th>Mover / Cancelar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaTurmasDoAluno"></tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer-actions">
+                <button type="button" class="close-button" id="concluirGerenciarAluno">Concluir</button>
+            </div>
+        </div>
+    </dialog>
+
     <script src="utilitarios.js"></script>
-    <script src="dados.js"></script>
     <script src="matriculas.js"></script>
 
 </body>

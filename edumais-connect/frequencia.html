@@ -6,6 +6,27 @@
     <title>Frequência | EduMais Connect</title>
 
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .ra-badge {
+            font-family: monospace;
+            font-weight: 700;
+            color: #194d78;
+        }
+        .chamada-resumo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.92rem;
+            color: #475569;
+        }
+        .chamada-atalhos {
+            display: flex;
+            gap: 8px;
+        }
+    </style>
 </head>
 
 <body class="dashboard-page">
@@ -21,28 +42,31 @@
             </div>
 
             <nav class="sidebar-navigation" aria-label="Menu da equipe">
-    <a href="dashboard-equipe.html" class="sidebar-link">
-        <span aria-hidden="true">🏠</span> Visão geral
-    </a>
-    <a href="alunos.html" class="sidebar-link">
-        <span aria-hidden="true">👨‍🎓</span> Alunos
-    </a>
-    <a href="turmas.html" class="sidebar-link">
-        <span aria-hidden="true">📚</span> Turmas
-    </a>
-    <a href="matriculas.html" class="sidebar-link">
-        <span aria-hidden="true">📝</span> Matrículas
-    </a>
-    <a href="frequencia.html" class="sidebar-link">
-        <span aria-hidden="true">📅</span> Frequência
-    </a>
-    <a href="acompanhamento.html" class="sidebar-link">
-        <span aria-hidden="true">📈</span> Acompanhamento
-    </a>
-    <a href="campanhas.html" class="sidebar-link">
-        <span aria-hidden="true">🎁</span> Campanhas
-    </a>
-</nav>
+                <a href="dashboard-equipe.html" class="sidebar-link">
+                    <span aria-hidden="true">🏠</span> Visão geral
+                </a>
+                <a href="alunos.html" class="sidebar-link">
+                    <span aria-hidden="true">👨‍🎓</span> Alunos
+                </a>
+                <a href="turmas.html" class="sidebar-link">
+                    <span aria-hidden="true">📚</span> Turmas
+                </a>
+                <a href="matriculas.html" class="sidebar-link">
+                    <span aria-hidden="true">📝</span> Matrículas
+                </a>
+                <a href="frequencia.html" class="sidebar-link active" aria-current="page">
+                    <span aria-hidden="true">📅</span> Frequência
+                </a>
+                <a href="acompanhamento.html" class="sidebar-link">
+                    <span aria-hidden="true">📈</span> Acompanhamento
+                </a>
+                <a href="campanhas.html" class="sidebar-link">
+                    <span aria-hidden="true">🎁</span> Campanhas
+                </a>
+                <a href="agente.html" class="sidebar-link">
+                    <span aria-hidden="true">🤖</span> Agente IA
+                </a>
+            </nav>
 
             <a href="login.html" class="logout-button" id="logoutButton">
                 <span aria-hidden="true">↪</span> Sair da plataforma
@@ -88,7 +112,16 @@
             </section>
 
             <section class="dashboard-section" aria-labelledby="tituloChamada" id="secaoChamada" hidden>
-                <h2 id="tituloChamada">Lista de chamada</h2>
+                <div class="chamada-resumo">
+                    <div>
+                        <h2 id="tituloChamada" style="margin-bottom: 2px;">Lista de chamada</h2>
+                        <span id="statusChamadaExistente"></span>
+                    </div>
+                    <div class="chamada-atalhos">
+                        <button type="button" class="table-button" id="btnMarcarTodos">Marcar todos</button>
+                        <button type="button" class="table-button" id="btnDesmarcarTodos">Desmarcar todos</button>
+                    </div>
+                </div>
 
                 <form id="chamadaForm">
                     <div class="table-wrapper">
@@ -96,6 +129,7 @@
                             <caption class="sr-only">Chamada de presença dos alunos da turma</caption>
                             <thead>
                                 <tr>
+                                    <th scope="col">RA</th>
                                     <th scope="col">Aluno</th>
                                     <th scope="col">E-mail</th>
                                     <th scope="col" class="text-center">Presente</th>
@@ -124,7 +158,7 @@
 
             <div class="state-box error" id="estadoErro" role="alert" hidden>
                 <h2>Não foi possível carregar os dados</h2>
-                <p>Os dados salvos no navegador parecem estar com problema.</p>
+                <p>Verifique se o servidor Python (porta 8001) e o PostgreSQL estão ativos.</p>
             </div>
 
         </main>
@@ -132,7 +166,6 @@
     </div>
 
     <script src="utilitarios.js"></script>
-    <script src="dados.js"></script>
     <script src="frequencia.js"></script>
 
 </body>

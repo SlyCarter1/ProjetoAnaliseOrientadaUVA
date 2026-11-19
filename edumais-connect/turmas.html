@@ -6,6 +6,31 @@
     <title>Turmas | EduMais Connect</title>
 
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .action-group { display: flex; flex-wrap: wrap; gap: 6px; }
+        .table-button.danger { background-color: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+        .table-button.danger:hover { background-color: #fecaca; }
+        .form-modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+        .form-modal-field { display: flex; flex-direction: column; gap: 6px; }
+        .form-modal-field.full { grid-column: 1 / -1; }
+        .form-modal-field label { font-size: 0.9rem; font-weight: 600; }
+        .form-modal-field input, .form-modal-field select {
+            padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;
+        }
+        .modal-footer-actions {
+            display: flex; justify-content: flex-end; gap: 10px;
+            margin-top: 20px; padding-top: 14px; border-top: 1px solid #e2e8f0;
+        }
+        .inline-enroll-bar {
+            display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;
+            background: #f8fafc; padding: 14px; border-radius: 10px; margin-bottom: 18px;
+            border: 1px solid #e2e8f0;
+        }
+        .inline-enroll-bar .form-modal-field { flex: 1; min-width: 220px; }
+        .ra-badge { font-family: monospace; font-weight: 700; color: #194d78; }
+        .vagas-badge { font-weight: 600; }
+        .vagas-badge.lotada { color: #b91c1c; }
+    </style>
 </head>
 
 <body class="dashboard-page">
@@ -21,28 +46,31 @@
             </div>
 
             <nav class="sidebar-navigation" aria-label="Menu da equipe">
-    <a href="dashboard-equipe.html" class="sidebar-link">
-        <span aria-hidden="true">🏠</span> Visão geral
-    </a>
-    <a href="alunos.html" class="sidebar-link">
-        <span aria-hidden="true">👨‍🎓</span> Alunos
-    </a>
-    <a href="turmas.html" class="sidebar-link">
-        <span aria-hidden="true">📚</span> Turmas
-    </a>
-    <a href="matriculas.html" class="sidebar-link">
-        <span aria-hidden="true">📝</span> Matrículas
-    </a>
-    <a href="frequencia.html" class="sidebar-link">
-        <span aria-hidden="true">📅</span> Frequência
-    </a>
-    <a href="acompanhamento.html" class="sidebar-link">
-        <span aria-hidden="true">📈</span> Acompanhamento
-    </a>
-    <a href="campanhas.html" class="sidebar-link">
-        <span aria-hidden="true">🎁</span> Campanhas
-    </a>
-</nav>
+                <a href="dashboard-equipe.html" class="sidebar-link">
+                    <span aria-hidden="true">🏠</span> Visão geral
+                </a>
+                <a href="alunos.html" class="sidebar-link">
+                    <span aria-hidden="true">👨‍🎓</span> Alunos
+                </a>
+                <a href="turmas.html" class="sidebar-link active" aria-current="page">
+                    <span aria-hidden="true">📚</span> Turmas
+                </a>
+                <a href="matriculas.html" class="sidebar-link">
+                    <span aria-hidden="true">📝</span> Matrículas
+                </a>
+                <a href="frequencia.html" class="sidebar-link">
+                    <span aria-hidden="true">📅</span> Frequência
+                </a>
+                <a href="acompanhamento.html" class="sidebar-link">
+                    <span aria-hidden="true">📈</span> Acompanhamento
+                </a>
+                <a href="campanhas.html" class="sidebar-link">
+                    <span aria-hidden="true">🎁</span> Campanhas
+                </a>
+                <a href="agente.html" class="sidebar-link">
+                    <span aria-hidden="true">🤖</span> Agente IA
+                </a>
+            </nav>
 
             <a href="login.html" class="logout-button" id="logoutButton">
                 <span aria-hidden="true">↪</span> Sair da plataforma
@@ -55,7 +83,7 @@
             <header class="dashboard-header">
                 <div>
                     <h1>Turmas</h1>
-                    <p>Cadastre e consulte as turmas, horários, educadores e vagas.</p>
+                    <p>Cadastre e edite turmas e gerencie os alunos matriculados em cada uma.</p>
                 </div>
             </header>
 
@@ -138,6 +166,7 @@
                                 <th scope="col">Horário</th>
                                 <th scope="col">Educador</th>
                                 <th scope="col">Vagas ocupadas</th>
+                                <th scope="col">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="listaTurmas"></tbody>
@@ -156,7 +185,7 @@
 
                 <div class="state-box error" id="estadoErro" role="alert" hidden>
                     <h2>Não foi possível carregar as turmas</h2>
-                    <p>Os dados salvos no navegador parecem estar com problema. Avise a equipe técnica.</p>
+                    <p>Verifique se o servidor Python (porta 8001) e o PostgreSQL estão ativos.</p>
                 </div>
 
             </section>
@@ -165,8 +194,94 @@
 
     </div>
 
+    <dialog class="details-dialog" id="alunosTurmaDialog" aria-labelledby="alunosTurmaTitulo" style="max-width: 780px; width: 92%;">
+        <div class="details-header">
+            <div>
+                <h2 id="alunosTurmaTitulo">Alunos da turma</h2>
+                <p id="alunosTurmaSubtitulo" style="font-size: 0.9rem; color: #475569;"></p>
+            </div>
+            <button type="button" class="close-button" id="fecharAlunosTurma">Fechar</button>
+        </div>
+
+        <div class="details-body">
+            <form id="inserirAlunoTurmaForm" class="inline-enroll-bar">
+                <input type="hidden" id="turmaAtualId">
+                <div class="form-modal-field">
+                    <label for="selectAlunoParaTurma">Adicionar aluno à turma</label>
+                    <select id="selectAlunoParaTurma" required></select>
+                </div>
+                <button type="submit" class="primary-button" id="btnInserirAlunoTurma">+ Inserir na turma</button>
+            </form>
+
+            <p id="modalTurmaFeedback" class="form-message" role="status" style="margin-bottom: 12px;"></p>
+
+            <div class="table-wrapper" id="modalTabelaWrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>RA</th>
+                            <th>Aluno</th>
+                            <th>Data</th>
+                            <th>Mover / Remover</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaAlunosDaTurma"></tbody>
+                </table>
+            </div>
+
+            <div class="state-box" id="modalSemAlunos" hidden>
+                <p>Nenhum aluno matriculado nesta turma ainda.</p>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="details-dialog" id="editarTurmaDialog" aria-labelledby="editarTurmaTitulo">
+        <div class="details-header">
+            <h2 id="editarTurmaTitulo">Editar turma</h2>
+            <button type="button" class="close-button" id="fecharEditarTurma">Fechar</button>
+        </div>
+
+        <div class="details-body">
+            <form id="editarTurmaForm">
+                <input type="hidden" id="editTurmaId">
+                <div class="form-modal-grid">
+                    <div class="form-modal-field full">
+                        <label for="editTurmaNome">Nome da turma *</label>
+                        <input type="text" id="editTurmaNome" required>
+                    </div>
+                    <div class="form-modal-field">
+                        <label for="editTurmaCurso">Curso *</label>
+                        <input type="text" id="editTurmaCurso" required>
+                    </div>
+                    <div class="form-modal-field">
+                        <label for="editTurmaVagas">Total de vagas *</label>
+                        <input type="number" id="editTurmaVagas" min="1" required>
+                    </div>
+                    <div class="form-modal-field">
+                        <label for="editTurmaHorario">Horário *</label>
+                        <input type="text" id="editTurmaHorario" required>
+                    </div>
+                    <div class="form-modal-field">
+                        <label for="editTurmaEducador">Educador responsável *</label>
+                        <input type="text" id="editTurmaEducador" required>
+                    </div>
+                    <div class="form-modal-field full">
+                        <label for="editTurmaAtivo">Situação da turma</label>
+                        <select id="editTurmaAtivo">
+                            <option value="true">Ativa (aberta para matrículas)</option>
+                            <option value="false">Inativa / Encerrada</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer-actions">
+                    <button type="button" class="close-button" id="cancelarEditarTurma">Cancelar</button>
+                    <button type="submit" class="primary-button">Salvar alterações</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
     <script src="utilitarios.js"></script>
-    <script src="dados.js"></script>
     <script src="turmas.js"></script>
 
 </body>

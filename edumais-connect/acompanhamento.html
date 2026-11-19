@@ -6,6 +6,13 @@
     <title>Acompanhamento Acadêmico | EduMais Connect</title>
 
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .ra-badge {
+            font-family: monospace;
+            font-weight: 700;
+            color: #194d78;
+        }
+    </style>
 </head>
 
 <body class="dashboard-page">
@@ -21,28 +28,31 @@
             </div>
 
             <nav class="sidebar-navigation" aria-label="Menu da equipe">
-    <a href="dashboard-equipe.html" class="sidebar-link">
-        <span aria-hidden="true">🏠</span> Visão geral
-    </a>
-    <a href="alunos.html" class="sidebar-link">
-        <span aria-hidden="true">👨‍🎓</span> Alunos
-    </a>
-    <a href="turmas.html" class="sidebar-link">
-        <span aria-hidden="true">📚</span> Turmas
-    </a>
-    <a href="matriculas.html" class="sidebar-link">
-        <span aria-hidden="true">📝</span> Matrículas
-    </a>
-    <a href="frequencia.html" class="sidebar-link">
-        <span aria-hidden="true">📅</span> Frequência
-    </a>
-    <a href="acompanhamento.html" class="sidebar-link">
-        <span aria-hidden="true">📈</span> Acompanhamento
-    </a>
-    <a href="campanhas.html" class="sidebar-link">
-        <span aria-hidden="true">🎁</span> Campanhas
-    </a>
-</nav>
+                <a href="dashboard-equipe.html" class="sidebar-link">
+                    <span aria-hidden="true">🏠</span> Visão geral
+                </a>
+                <a href="alunos.html" class="sidebar-link">
+                    <span aria-hidden="true">👨‍🎓</span> Alunos
+                </a>
+                <a href="turmas.html" class="sidebar-link">
+                    <span aria-hidden="true">📚</span> Turmas
+                </a>
+                <a href="matriculas.html" class="sidebar-link">
+                    <span aria-hidden="true">📝</span> Matrículas
+                </a>
+                <a href="frequencia.html" class="sidebar-link">
+                    <span aria-hidden="true">📅</span> Frequência
+                </a>
+                <a href="acompanhamento.html" class="sidebar-link active" aria-current="page">
+                    <span aria-hidden="true">📈</span> Acompanhamento
+                </a>
+                <a href="campanhas.html" class="sidebar-link">
+                    <span aria-hidden="true">🎁</span> Campanhas
+                </a>
+                <a href="agente.html" class="sidebar-link">
+                    <span aria-hidden="true">🤖</span> Agente IA
+                </a>
+            </nav>
 
             <a href="login.html" class="logout-button" id="logoutButton">
                 <span aria-hidden="true">↪</span> Sair da plataforma
@@ -66,7 +76,7 @@
                     <div class="form-grid">
 
                         <div class="form-field">
-                            <label for="acompanhamentoAluno">Aluno</label>
+                            <label for="acompanhamentoAluno">Aluno (RA e Nome)</label>
                             <select id="acompanhamentoAluno" required aria-describedby="erroAluno">
                                 <option value="">Selecione um aluno</option>
                             </select>
@@ -107,7 +117,7 @@
 
                 <form class="toolbar" id="buscaForm" role="search">
                     <div class="toolbar-field">
-                        <label for="buscaAcompanhamento">Pesquisar por nome do aluno ou tema</label>
+                        <label for="buscaAcompanhamento">Pesquisar por RA, nome do aluno ou tema</label>
                         <input type="search" id="buscaAcompanhamento" autocomplete="off"
                                placeholder="Digite para pesquisar">
                     </div>
@@ -121,7 +131,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">Data</th>
-                                <th scope="col">Aluno</th>
+                                <th scope="col">Aluno / RA</th>
                                 <th scope="col">Tema</th>
                                 <th scope="col">Observação</th>
                             </tr>
@@ -142,7 +152,7 @@
 
                 <div class="state-box error" id="estadoErro" role="alert" hidden>
                     <h2>Não foi possível carregar os dados</h2>
-                    <p>Os dados salvos no navegador parecem estar com problema.</p>
+                    <p>Verifique se o servidor Python (porta 8001) e o PostgreSQL estão ativos.</p>
                 </div>
             </section>
 
@@ -151,7 +161,6 @@
     </div>
 
     <script src="utilitarios.js"></script>
-    <script src="dados.js"></script>
     <script src="acompanhamento.js"></script>
 
 </body>

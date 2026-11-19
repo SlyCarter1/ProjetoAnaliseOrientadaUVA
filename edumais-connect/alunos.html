@@ -6,6 +6,95 @@
     <title>Alunos | EduMais Connect</title>
 
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .form-modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 10px;
+        }
+        .form-modal-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-modal-field.full {
+            grid-column: 1 / -1;
+        }
+        .form-modal-field label {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .form-modal-field input,
+        .form-modal-field select {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        .modal-footer-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 14px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .action-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .table-button.danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border-color: #fecaca;
+        }
+        .table-button.danger:hover {
+            background-color: #fecaca;
+        }
+        .status-tag {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-tag.ativo {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status-tag.inativo {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .feedback-toast {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        .feedback-toast.sucesso {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .feedback-toast.erro {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        @media (max-width: 640px) {
+            .form-modal-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body class="dashboard-page">
@@ -21,28 +110,31 @@
             </div>
 
             <nav class="sidebar-navigation" aria-label="Menu da equipe">
-    <a href="dashboard-equipe.html" class="sidebar-link">
-        <span aria-hidden="true">🏠</span> Visão geral
-    </a>
-    <a href="alunos.html" class="sidebar-link">
-        <span aria-hidden="true">👨‍🎓</span> Alunos
-    </a>
-    <a href="turmas.html" class="sidebar-link">
-        <span aria-hidden="true">📚</span> Turmas
-    </a>
-    <a href="matriculas.html" class="sidebar-link">
-        <span aria-hidden="true">📝</span> Matrículas
-    </a>
-    <a href="frequencia.html" class="sidebar-link">
-        <span aria-hidden="true">📅</span> Frequência
-    </a>
-    <a href="acompanhamento.html" class="sidebar-link">
-        <span aria-hidden="true">📈</span> Acompanhamento
-    </a>
-    <a href="campanhas.html" class="sidebar-link">
-        <span aria-hidden="true">🎁</span> Campanhas
-    </a>
-</nav>
+                <a href="dashboard-equipe.html" class="sidebar-link">
+                    <span aria-hidden="true">🏠</span> Visão geral
+                </a>
+                <a href="alunos.html" class="sidebar-link active" aria-current="page">
+                    <span aria-hidden="true">👨‍🎓</span> Alunos
+                </a>
+                <a href="turmas.html" class="sidebar-link">
+                    <span aria-hidden="true">📚</span> Turmas
+                </a>
+                <a href="matriculas.html" class="sidebar-link">
+                    <span aria-hidden="true">📝</span> Matrículas
+                </a>
+                <a href="frequencia.html" class="sidebar-link">
+                    <span aria-hidden="true">📅</span> Frequência
+                </a>
+                <a href="acompanhamento.html" class="sidebar-link">
+                    <span aria-hidden="true">📈</span> Acompanhamento
+                </a>
+                <a href="campanhas.html" class="sidebar-link">
+                    <span aria-hidden="true">🎁</span> Campanhas
+                </a>
+                <a href="agente.html" class="sidebar-link">
+                    <span aria-hidden="true">🤖</span> Agente IA
+                </a>
+            </nav>
 
             <a href="login.html" class="logout-button" id="logoutButton">
                 <span aria-hidden="true">↪</span> Sair da plataforma
@@ -52,12 +144,15 @@
 
         <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
 
-            <header class="dashboard-header">
+            <header class="dashboard-header header-actions">
                 <div>
                     <h1>Alunos</h1>
-                    <p>Consulte os alunos cadastrados e os dados dos responsáveis.</p>
+                    <p>Cadastre, edite e consulte os alunos e os dados dos responsáveis.</p>
                 </div>
+                <button type="button" class="table-button" id="btnNovoAluno">+ Cadastrar aluno</button>
             </header>
+
+            <div id="feedbackMensagem" class="feedback-toast" role="status" hidden></div>
 
             <section aria-labelledby="tituloFiltros">
 
@@ -92,7 +187,8 @@
                                 <th scope="col">Nome</th>
                                 <th scope="col">Idade</th>
                                 <th scope="col">E-mail</th>
-                                <th scope="col">Detalhes</th>
+                                <th scope="col">Situação</th>
+                                <th scope="col">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="listaAlunos"></tbody>
@@ -101,7 +197,7 @@
 
                 <div class="state-box" id="estadoVazio" hidden>
                     <h2>Nenhum aluno cadastrado ainda</h2>
-                    <p>Quando alguém se cadastrar como aluno, ele aparecerá aqui.</p>
+                    <p>Clique em "+ Cadastrar aluno" para adicionar o primeiro estudante no banco.</p>
                 </div>
 
                 <div class="state-box" id="estadoSemResultado" hidden>
@@ -111,7 +207,7 @@
 
                 <div class="state-box error" id="estadoErro" role="alert" hidden>
                     <h2>Não foi possível carregar os alunos</h2>
-                    <p>Os dados salvos no navegador parecem estar com problema. Avise a equipe técnica.</p>
+                    <p>Verifique se o servidor Python (porta 8001) e o PostgreSQL estão ativos.</p>
                 </div>
 
             </section>
@@ -120,6 +216,7 @@
 
     </div>
 
+    <!-- Modal de Detalhes (somente visualização) -->
     <dialog class="details-dialog" id="detalhesDialog" aria-labelledby="detalhesTitulo">
 
         <div class="details-header">
@@ -141,6 +238,8 @@
                 <dd id="detIdade"></dd>
                 <dt>Telefone</dt>
                 <dd id="detTelefone"></dd>
+                <dt>Situação</dt>
+                <dd id="detSituacao"></dd>
             </dl>
 
             <h3>Responsável</h3>
@@ -151,6 +250,76 @@
                 <dd id="detRespTelefone"></dd>
             </dl>
 
+        </div>
+
+    </dialog>
+
+    <!-- Modal de Cadastro / Edição de Aluno -->
+    <dialog class="details-dialog" id="formAlunoDialog" aria-labelledby="formAlunoTitulo">
+
+        <div class="details-header">
+            <h2 id="formAlunoTitulo">Cadastrar aluno</h2>
+            <button type="button" class="close-button" id="fecharFormAluno">Fechar</button>
+        </div>
+
+        <div class="details-body">
+            <form id="formAluno">
+                <input type="hidden" id="campoAlunoId">
+
+                <h3>Dados do estudante</h3>
+                <div class="form-modal-grid">
+                    <div class="form-modal-field full">
+                        <label for="campoNome">Nome completo *</label>
+                        <input type="text" id="campoNome" required minlength="3" placeholder="Ex: Mariana Oliveira">
+                    </div>
+
+                    <div class="form-modal-field">
+                        <label for="campoEmail">E-mail *</label>
+                        <input type="email" id="campoEmail" required placeholder="mariana@email.com">
+                    </div>
+
+                    <div class="form-modal-field">
+                        <label for="campoTelefone">Telefone</label>
+                        <input type="text" id="campoTelefone" placeholder="22999998888">
+                    </div>
+
+                    <div class="form-modal-field">
+                        <label for="campoNascimento">Data de nascimento</label>
+                        <input type="date" id="campoNascimento">
+                    </div>
+
+                    <div class="form-modal-field" id="grupoSenha">
+                        <label for="campoSenha">Senha inicial *</label>
+                        <input type="text" id="campoSenha" value="edumais123" required>
+                    </div>
+
+                    <div class="form-modal-field" id="grupoAtivo" hidden>
+                        <label for="campoAtivo">Situação cadastral</label>
+                        <select id="campoAtivo">
+                            <option value="true">Ativo</option>
+                            <option value="false">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 18px;">Responsável (opcional)</h3>
+                <div class="form-modal-grid">
+                    <div class="form-modal-field">
+                        <label for="campoRespNome">Nome do responsável</label>
+                        <input type="text" id="campoRespNome" placeholder="Ex: Cláudia Oliveira">
+                    </div>
+
+                    <div class="form-modal-field">
+                        <label for="campoRespTelefone">Telefone do responsável</label>
+                        <input type="text" id="campoRespTelefone" placeholder="22988887777">
+                    </div>
+                </div>
+
+                <div class="modal-footer-actions">
+                    <button type="button" class="close-button" id="cancelarFormAluno">Cancelar</button>
+                    <button type="submit" class="table-button" id="btnSalvarAluno">Salvar aluno</button>
+                </div>
+            </form>
         </div>
 
     </dialog>

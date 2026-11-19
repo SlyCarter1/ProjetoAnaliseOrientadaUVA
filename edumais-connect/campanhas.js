@@ -1,12 +1,10 @@
 // campanhas.js
-// Tela de campanhas e doações (área da equipe): cadastro e listagem de campanhas.
-// Depende de utilitarios.js e dados.js.
+// Tela de campanhas e arrecadações integrada ao PostgreSQL via FastAPI.
+// Depende apenas de utilitarios.js.
 
 const usuarioEquipe = exigirEquipe();
+const API_BASE = "http://localhost:8001";
 
-const CHAVE_CAMPANHAS = "eduMaisCampanhas";
-
-// ---------- ELEMENTOS DA PÁGINA ----------
 const campanhaForm = document.getElementById("campanhaForm");
 const nomeInput = document.getElementById("campanhaNome");
 const metaInput = document.getElementById("campanhaMeta");
@@ -31,17 +29,11 @@ const estadoErro = document.getElementById("estadoErro");
 
 let campanhas = [];
 
-// ---------- CARREGAR DADOS ----------
-
-function carregarCampanhas() {
-    return lerLista(CHAVE_CAMPANHAS);
+async function carregarCampanhas() {
+    const res = await fetch(`${API_BASE}/campanhas`);
+    if (!res.ok) throw new Error("Falha ao buscar campanhas.");
+    return await res.json();
 }
-
-function salvarCampanhas(lista) {
-    salvarLista(CHAVE_CAMPANHAS, lista);
-}
-
-// ---------- FORMATAÇÃO E UTILITÁRIOS ----------
 
 function formatarMoeda(valor) {
     return Number(valor).toLocaleString("pt-BR", {
@@ -51,14 +43,13 @@ function formatarMoeda(valor) {
 }
 
 function verificarStatus(prazo) {
+    const dataStr = String(prazo || "").split("T")[0];
     const hoje = new Date().toISOString().split("T")[0];
-    if (prazo < hoje) {
+    if (dataStr && dataStr < hoje) {
         return { texto: "Encerrada", classe: "badge-encerrada" };
     }
     return { texto: "Em andamento", classe: "badge-ativa" };
 }
-
-// ---------- MOSTRAR NA TELA ----------
 
 function mostrarApenas(blocoVisivel) {
     [tabelaWrapper, estadoVazio, estadoSemResultado, estadoErro].forEach(bloco => {
@@ -75,7 +66,6 @@ function criarCelula(texto) {
 function criarLinha(campanha) {
     const linha = document.createElement("tr");
 
-    // Coluna Nome + Descrição secundária
     const celulaNome = document.createElement("td");
     celulaNome.append(valorOuPadrao(campanha.nome));
 
@@ -90,7 +80,6 @@ function criarLinha(campanha) {
     linha.appendChild(criarCelula(formatarMoeda(campanha.meta)));
     linha.appendChild(criarCelula(formatarData(campanha.prazo)));
 
-    // Coluna Status
     const statusInfo = verificarStatus(campanha.prazo);
     const celulaStatus = document.createElement("td");
     const badge = document.createElement("span");
@@ -115,7 +104,7 @@ function atualizarLista() {
 
     const filtradas = campanhas.filter(c => {
         if (!termo) return true;
-        const texto = normalizarTexto(`${c.nome} ${c.descricao}`);
+        const texto = normalizarTexto(`${c.nome || ""} ${c.descricao || ""}`);
         return texto.includes(termo);
     });
 
@@ -132,24 +121,20 @@ function atualizarLista() {
     mostrarApenas(tabelaWrapper);
 }
 
-// ---------- VALIDAÇÕES E FORMULÁRIO ----------
-
 function limparErros() {
-    erroNome.textContent = "";
-    nomeInput.setAttribute("aria-invalid", "false");
-
-    erroMeta.textContent = "";
-    metaInput.setAttribute("aria-invalid", "false");
-
-    erroPrazo.textContent = "";
-    prazoInput.setAttribute("aria-invalid", "false");
-
-    erroDescricao.textContent = "";
-    descricaoInput.setAttribute("aria-invalid", "false");
+    [
+        [erroNome, nomeInput],
+        [erroMeta, metaInput],
+        [erroPrazo, prazoInput],
+        [erroDescricao, descricaoInput]
+    ].forEach(([erro, campo]) => {
+        erro.textContent = "";
+        campo.setAttribute("aria-invalid", "false");
+    });
 }
 
 function configurarFormulario() {
-    campanhaForm.addEventListener("submit", (evento) => {
+    campanhaForm.addEventListener("submit", async (evento) => {
         evento.preventDefault();
         campanhaMensagem.textContent = "";
         limparErros();
@@ -166,19 +151,16 @@ function configurarFormulario() {
             nomeInput.setAttribute("aria-invalid", "true");
             valido = false;
         }
-
         if (isNaN(metaVal) || metaVal <= 0) {
             erroMeta.textContent = "Informe um valor de meta válido.";
             metaInput.setAttribute("aria-invalid", "true");
             valido = false;
         }
-
         if (!prazoVal) {
             erroPrazo.textContent = "Informe o prazo final.";
             prazoInput.setAttribute("aria-invalid", "true");
             valido = false;
         }
-
         if (!descricaoVal) {
             erroDescricao.textContent = "Descreva os objetivos da campanha.";
             descricaoInput.setAttribute("aria-invalid", "true");
@@ -192,37 +174,42 @@ function configurarFormulario() {
         }
 
         try {
-            const novaCampanha = {
-                id: gerarIdProvisorio(),
-                nome: nomeVal,
-                meta: metaVal,
-                prazo: prazoVal,
-                descricao: descricaoVal,
-                criadoEm: new Date().toISOString()
-            };
+            const res = await fetch(`${API_BASE}/campanhas`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    nome: nomeVal,
+                    meta: metaVal,
+                    prazo: prazoVal,
+                    descricao: descricaoVal
+                })
+            });
+            const dados = await res.json();
 
-            campanhas.push(novaCampanha);
-            salvarCampanhas(campanhas);
+            if (!res.ok) {
+                campanhaMensagem.textContent = dados.detail || "Não foi possível salvar a campanha.";
+                campanhaMensagem.className = "form-message error";
+                return;
+            }
 
             campanhaForm.reset();
             limparErros();
 
-            campanhaMensagem.textContent = "Campanha cadastrada com sucesso!";
+            campanhaMensagem.textContent = dados.mensagem || "Campanha cadastrada com sucesso!";
             campanhaMensagem.className = "form-message success";
 
+            campanhas = await carregarCampanhas();
             atualizarLista();
             nomeInput.focus();
         } catch (erro) {
             console.error("Falha ao salvar campanha:", erro.name);
-            campanhaMensagem.textContent = "Não foi possível salvar a campanha. Tente novamente.";
+            campanhaMensagem.textContent = "Falha de conexão com o servidor Python na porta 8001.";
             campanhaMensagem.className = "form-message error";
         }
     });
 }
 
-// ---------- INÍCIO ----------
-
-function iniciarPaginaCampanhas() {
+async function iniciarPaginaCampanhas() {
     configurarLogout();
     configurarFormulario();
 
@@ -230,7 +217,7 @@ function iniciarPaginaCampanhas() {
     buscaInput.addEventListener("input", atualizarLista);
 
     try {
-        campanhas = carregarCampanhas();
+        campanhas = await carregarCampanhas();
         atualizarLista();
     } catch (erro) {
         console.error("Falha ao carregar campanhas:", erro.name);

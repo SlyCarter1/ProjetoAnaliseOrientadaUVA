@@ -1,12 +1,10 @@
 // frequencia.js
-// Tela de frequência (área da equipe): seleção de turma/data e marcação de presença.
-// Depende de utilitarios.js e dados.js.
+// Tela de frequência (área da equipe) integrada ao PostgreSQL via FastAPI.
+// Depende apenas de utilitarios.js.
 
 const usuarioEquipe = exigirEquipe();
+const API_BASE = "http://localhost:8001";
 
-const CHAVE_FREQUENCIA = "eduMaisFrequencia";
-
-// ---------- ELEMENTOS DA PÁGINA ----------
 const selecaoForm = document.getElementById("selecaoForm");
 const turmaSelect = document.getElementById("frequenciaTurma");
 const dataInput = document.getElementById("frequenciaData");
@@ -17,43 +15,13 @@ const secaoChamada = document.getElementById("secaoChamada");
 const listaChamada = document.getElementById("listaChamada");
 const chamadaForm = document.getElementById("chamadaForm");
 const chamadaMensagem = document.getElementById("chamadaMensagem");
+const statusChamadaExistente = document.getElementById("statusChamadaExistente");
 
 const estadoInstrucao = document.getElementById("estadoInstrucao");
 const estadoSemAlunos = document.getElementById("estadoSemAlunos");
 const estadoErro = document.getElementById("estadoErro");
 
 let turmas = [];
-let alunos = [];
-let matriculas = [];
-
-// ---------- CARREGAR DADOS ----------
-
-function carregarDadosGerais() {
-    turmas = listarTurmas().filter(t => t.id);
-    alunos = lerLista("eduMaisUsuarios").filter(u => u.perfil === "aluno");
-    matriculas = listarMatriculas();
-}
-
-function listarFrequencias() {
-    return lerLista(CHAVE_FREQUENCIA);
-}
-
-function salvarFrequencias(lista) {
-    salvarLista(CHAVE_FREQUENCIA, lista);
-}
-
-// ---------- INICIALIZAÇÃO DOS SELECTS ----------
-
-function preencherTurmas() {
-    const opcoes = turmas.map(turma => {
-        const opcao = document.createElement("option");
-        opcao.value = turma.id;
-        opcao.textContent = `${valorOuPadrao(turma.nome)} (${valorOuPadrao(turma.horario)})`;
-        return opcao;
-    });
-
-    turmaSelect.replaceChildren(criarOpcaoPadrao("Selecione uma turma"), ...opcoes);
-}
 
 function criarOpcaoPadrao(texto) {
     const opcao = document.createElement("option");
@@ -62,7 +30,6 @@ function criarOpcaoPadrao(texto) {
     return opcao;
 }
 
-// Define a data de hoje no input de data por padrão
 function definirDataHoje() {
     const hoje = new Date();
     const ano = hoje.getFullYear();
@@ -71,8 +38,6 @@ function definirDataHoje() {
     dataInput.value = `${ano}-${mes}-${dia}`;
 }
 
-// ---------- CONTROLE DE ESTADOS DA TELA ----------
-
 function mostrarEstado({ instrucao = false, semAlunos = false, chamada = false, erro = false }) {
     estadoInstrucao.hidden = !instrucao;
     estadoSemAlunos.hidden = !semAlunos;
@@ -80,65 +45,80 @@ function mostrarEstado({ instrucao = false, semAlunos = false, chamada = false, 
     estadoErro.hidden = !erro;
 }
 
-// ---------- MANIPULAÇÃO DA CHAMADA ----------
+async function carregarTurmas() {
+    const res = await fetch(`${API_BASE}/turmas`);
+    if (!res.ok) throw new Error("Falha ao buscar turmas.");
+    const todas = await res.json();
+    turmas = todas.filter(t => t.ativo !== false);
 
-function carregarChamada(turmaId, dataAula) {
-    // Busca matrículas da turma
-    const matriculasDaTurma = matriculas.filter(m => m.turmaId === turmaId);
-
-    if (matriculasDaTurma.length === 0) {
-        mostrarEstado({ semAlunos: true });
-        return;
-    }
-
-    // Pega os dados dos alunos matriculados
-    const alunosDaTurma = matriculasDaTurma.map(mat => {
-        return alunos.find(aluno => aluno.email === mat.alunoEmail);
-    }).filter(Boolean); // Remove nulos caso algum aluno tenha sido removido
-
-    // Busca registros de frequência salvos para essa turma e data
-    const todasFreq = listarFrequencias();
-    const registroExistente = todasFreq.find(f => f.turmaId === turmaId && f.data === dataAula);
-    const presentesSalvos = registroExistente ? registroExistente.presentes : [];
-
-    // Monta as linhas da tabela
-    const linhas = alunosDaTurma.map(aluno => {
-        const tr = document.createElement("tr");
-
-        const tdNome = document.createElement("td");
-        tdNome.textContent = valorOuPadrao(aluno.nome);
-
-        const tdEmail = document.createElement("td");
-        tdEmail.textContent = valorOuPadrao(aluno.email);
-
-        const tdCheck = document.createElement("td");
-        tdCheck.className = "text-center";
-
-        const inputCheck = document.createElement("input");
-        inputCheck.type = "checkbox";
-        inputCheck.name = "alunoPresente";
-        inputCheck.value = aluno.email;
-        // Se já houver registro salvo, marca conforme o histórico; senão, padrão é presente (true)
-        inputCheck.checked = registroExistente ? presentesSalvos.includes(aluno.email) : true;
-        inputCheck.setAttribute("aria-label", `Marcar presença de ${valorOuPadrao(aluno.nome)}`);
-
-        tdCheck.appendChild(inputCheck);
-
-        tr.appendChild(tdNome);
-        tr.appendChild(tdEmail);
-        tr.appendChild(tdCheck);
-
-        return tr;
+    const opcoes = turmas.map(turma => {
+        const opcao = document.createElement("option");
+        opcao.value = turma.turma_id;
+        opcao.textContent = `${valorOuPadrao(turma.turma)} (${valorOuPadrao(turma.horario)}) — ${turma.alunos_matriculados} aluno(s)`;
+        return opcao;
     });
 
-    listaChamada.replaceChildren(...linhas);
-    mostrarEstado({ chamada: true });
+    turmaSelect.replaceChildren(criarOpcaoPadrao("Selecione uma turma"), ...opcoes);
 }
 
-// ---------- EVENTOS E FORMULÁRIOS ----------
+async function carregarChamada(turmaId, dataAula) {
+    try {
+        const res = await fetch(
+            `${API_BASE}/frequencias?turma_id=${encodeURIComponent(turmaId)}&data_aula=${encodeURIComponent(dataAula)}`
+        );
+        if (!res.ok) throw new Error("Erro ao carregar chamada.");
+
+        const lista = await res.json();
+
+        if (lista.length === 0) {
+            mostrarEstado({ semAlunos: true });
+            return;
+        }
+
+        const jaRegistrada = lista.some(item => item.presente !== null);
+        statusChamadaExistente.textContent = jaRegistrada
+            ? "Chamada já registrada anteriormente para esta data (editável)."
+            : "Nova chamada — todos marcados como presentes por padrão.";
+
+        const linhas = lista.map(aluno => {
+            const tr = document.createElement("tr");
+
+            const tdRa = document.createElement("td");
+            tdRa.className = "ra-badge";
+            tdRa.textContent = aluno.numero_matricula || "—";
+
+            const tdNome = document.createElement("td");
+            tdNome.textContent = valorOuPadrao(aluno.nome);
+
+            const tdEmail = document.createElement("td");
+            tdEmail.textContent = valorOuPadrao(aluno.email);
+
+            const tdCheck = document.createElement("td");
+            tdCheck.className = "text-center";
+
+            const inputCheck = document.createElement("input");
+            inputCheck.type = "checkbox";
+            inputCheck.name = "alunoPresente";
+            inputCheck.dataset.matriculaId = aluno.matricula_id;
+            inputCheck.checked = aluno.presente !== null ? Boolean(aluno.presente) : true;
+            inputCheck.setAttribute("aria-label", `Marcar presença de ${valorOuPadrao(aluno.nome)}`);
+
+            tdCheck.appendChild(inputCheck);
+
+            tr.append(tdRa, tdNome, tdEmail, tdCheck);
+            return tr;
+        });
+
+        listaChamada.replaceChildren(...linhas);
+        mostrarEstado({ chamada: true });
+    } catch (erro) {
+        console.error("Erro ao carregar chamada:", erro.name);
+        mostrarEstado({ erro: true });
+    }
+}
 
 function configurarFormularios() {
-    selecaoForm.addEventListener("submit", (evento) => {
+    selecaoForm.addEventListener("submit", async (evento) => {
         evento.preventDefault();
         chamadaMensagem.textContent = "";
 
@@ -167,55 +147,69 @@ function configurarFormularios() {
 
         if (!valido) return;
 
-        carregarChamada(turmaId, dataAula);
+        await carregarChamada(turmaId, dataAula);
     });
 
-    chamadaForm.addEventListener("submit", (evento) => {
+    document.getElementById("btnMarcarTodos").addEventListener("click", () => {
+        chamadaForm.querySelectorAll("input[name='alunoPresente']").forEach(cb => {
+            cb.checked = true;
+        });
+    });
+
+    document.getElementById("btnDesmarcarTodos").addEventListener("click", () => {
+        chamadaForm.querySelectorAll("input[name='alunoPresente']").forEach(cb => {
+            cb.checked = false;
+        });
+    });
+
+    chamadaForm.addEventListener("submit", async (evento) => {
         evento.preventDefault();
 
-        const turmaId = turmaSelect.value;
+        const turmaId = Number(turmaSelect.value);
         const dataAula = dataInput.value;
 
-        // Captura todos os checkboxes marcados
-        const checkboxes = chamadaForm.querySelectorAll("input[name='alunoPresente']:checked");
-        const presentes = Array.from(checkboxes).map(cb => cb.value);
+        const checkboxes = chamadaForm.querySelectorAll("input[name='alunoPresente']");
+        const registros = Array.from(checkboxes).map(cb => ({
+            matricula_id: Number(cb.dataset.matriculaId),
+            presente: cb.checked
+        }));
 
         try {
-            const todasFreq = listarFrequencias();
-            
-            // Remove registro anterior da mesma turma e data, se existir
-            const filtradas = todasFreq.filter(f => !(f.turmaId === turmaId && f.data === dataAula));
-
-            // Adiciona o novo registro
-            filtradas.push({
-                turmaId: turmaId,
-                data: dataAula,
-                presentes: presentes,
-                atualizadoEm: new Date().toISOString()
+            const res = await fetch(`${API_BASE}/frequencias`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    turma_id: turmaId,
+                    data_aula: dataAula,
+                    registros
+                })
             });
+            const dados = await res.json();
 
-            salvarFrequencias(filtradas);
+            if (!res.ok) {
+                chamadaMensagem.textContent = dados.detail || "Erro ao salvar frequência.";
+                chamadaMensagem.className = "form-message error";
+                return;
+            }
 
-            chamadaMensagem.textContent = "Frequência salva com sucesso!";
+            statusChamadaExistente.textContent = "Chamada registrada e salva no PostgreSQL.";
+            chamadaMensagem.textContent = dados.mensagem || "Frequência salva com sucesso!";
             chamadaMensagem.className = "form-message success";
         } catch (erro) {
             console.error("Erro ao salvar frequência:", erro.name);
-            chamadaMensagem.textContent = "Erro ao salvar frequência. Tente novamente.";
+            chamadaMensagem.textContent = "Falha de conexão com o servidor Python na porta 8001.";
             chamadaMensagem.className = "form-message error";
         }
     });
 }
 
-// ---------- INÍCIO ----------
-
-function iniciarPaginaFrequencia() {
+async function iniciarPaginaFrequencia() {
     configurarLogout();
     configurarFormularios();
     definirDataHoje();
 
     try {
-        carregarDadosGerais();
-        preencherTurmas();
+        await carregarTurmas();
         mostrarEstado({ instrucao: true });
     } catch (erro) {
         console.error("Falha ao carregar dados da frequência:", erro.name);

@@ -1,15 +1,59 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel da Equipe | EduMais Connect</title>
+    <title>Visão Geral | EduMais Connect</title>
 
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+        .kpi-label {
+            font-size: 0.88rem;
+            color: #475569;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.1;
+        }
+        .kpi-sub {
+            font-size: 0.82rem;
+            color: #64748b;
+            margin-top: 6px;
+        }
+        .ra-badge {
+            font-family: monospace;
+            font-weight: 700;
+            color: #194d78;
+        }
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+    </style>
 </head>
 
 <body class="dashboard-page">
+
+    <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo</a>
 
     <div class="dashboard-container">
 
@@ -19,70 +63,139 @@
                 ✦ EduMais <span>Connect</span>
             </div>
 
-            <nav class="sidebar-navigation">
-    <a href="dashboard-equipe.html" class="sidebar-link">🏠 Visão geral</a>
-    <a href="alunos.html" class="sidebar-link">👨‍🎓 Alunos</a>
-    <a href="turmas.html" class="sidebar-link">📚 Turmas</a>
-    <a href="matriculas.html" class="sidebar-link">📝 Matrículas</a>
-    <a href="frequencia.html" class="sidebar-link">📅 Frequência</a>
-    <a href="acompanhamento.html" class="sidebar-link">📈 Acompanhamento</a>
-    <a href="campanhas.html" class="sidebar-link active">📢 Campanhas</a>
-</nav>
+            <nav class="sidebar-navigation" aria-label="Menu da equipe">
+                <a href="dashboard-equipe.html" class="sidebar-link active" aria-current="page">
+                    <span aria-hidden="true">🏠</span> Visão geral
+                </a>
+                <a href="alunos.html" class="sidebar-link">
+                    <span aria-hidden="true">👨‍🎓</span> Alunos
+                </a>
+                <a href="turmas.html" class="sidebar-link">
+                    <span aria-hidden="true">📚</span> Turmas
+                </a>
+                <a href="matriculas.html" class="sidebar-link">
+                    <span aria-hidden="true">📝</span> Matrículas
+                </a>
+                <a href="frequencia.html" class="sidebar-link">
+                    <span aria-hidden="true">📅</span> Frequência
+                </a>
+                <a href="acompanhamento.html" class="sidebar-link">
+                    <span aria-hidden="true">📈</span> Acompanhamento
+                </a>
+                <a href="campanhas.html" class="sidebar-link">
+                    <span aria-hidden="true">🎁</span> Campanhas
+                </a>
+                <a href="agente.html" class="sidebar-link">
+                    <span aria-hidden="true">🤖</span> Agente IA
+                </a>
+            </nav>
 
             <a href="login.html" class="logout-button" id="logoutButton">
-                ↪ Sair da plataforma
+                <span aria-hidden="true">↪</span> Sair da plataforma
             </a>
 
         </aside>
 
-        <main class="dashboard-content">
+        <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
 
             <header class="dashboard-header">
-                <h1 id="teamGreeting">Painel da equipe</h1>
-                <p>Gerencie as atividades e os alunos da EduMais.</p>
+                <div>
+                    <h1>Visão geral</h1>
+                    <p id="boasVindasEquipe">Resumo em tempo real dos cadastros, turmas e matrículas.</p>
+                </div>
             </header>
 
-            <section class="welcome-card">
-                <h2>Bem-vindo à área administrativa!</h2>
-                <p>
-                    Aqui você poderá organizar os alunos, controlar as turmas,
-                    registrar frequências e acompanhar o desenvolvimento dos estudantes.
-                </p>
-            </section>
+            <div class="state-box error" id="estadoErro" role="alert" hidden>
+                <h2>Não foi possível carregar o resumo</h2>
+                <p>Verifique se o servidor Python (porta 8001) e o PostgreSQL estão ativos.</p>
+            </div>
 
-            <section class="dashboard-section">
+            <section aria-label="Indicadores principais">
+                <div class="kpi-grid">
+                    <article class="kpi-card">
+                        <p class="kpi-label">Alunos ativos</p>
+                        <p class="kpi-value" id="kpiAlunosAtivos">—</p>
+                        <p class="kpi-sub" id="kpiAlunosTotal">Carregando...</p>
+                    </article>
 
-                <h2>Resumo da organização</h2>
+                    <article class="kpi-card">
+                        <p class="kpi-label">Turmas ativas</p>
+                        <p class="kpi-value" id="kpiTurmasAtivas">—</p>
+                        <p class="kpi-sub" id="kpiVagasLivres">Carregando...</p>
+                    </article>
 
-                <div class="dashboard-cards">
+                    <article class="kpi-card">
+                        <p class="kpi-label">Alunos matriculados</p>
+                        <p class="kpi-value" id="kpiMatriculasAtivas">—</p>
+                        <p class="kpi-sub" id="kpiOcupacaoGeral">Carregando...</p>
+                    </article>
 
-                    <div class="dashboard-card">
-                        <span>👨‍🎓</span>
-                        <h3 id="totalAlunos">0</h3>
-                        <p>Alunos cadastrados</p>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <span>📚</span>
-                        <h3 id="totalTurmas">0</h3>
-                        <p>Turmas cadastradas</p>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <span>📝</span>
-                        <h3 id="totalMatriculas">0</h3>
-                        <p>Matrículas realizadas</p>
-                    </div>
-
+                    <article class="kpi-card">
+                        <p class="kpi-label">Último RA gerado</p>
+                        <p class="kpi-value" id="kpiUltimoRa" style="font-size: 1.65rem; font-family: monospace;">—</p>
+                        <p class="kpi-sub" id="kpiUltimoAluno">Carregando...</p>
+                    </article>
                 </div>
 
+                <div class="quick-links">
+                    <a href="alunos.html" class="primary-button">+ Novo aluno</a>
+                    <a href="turmas.html" class="table-button">Gerenciar turmas</a>
+                    <a href="matriculas.html" class="table-button">Nova matrícula</a>
+                    <a href="agente.html" class="table-button">Consultar Agente IA</a>
+                </div>
+            </section>
+
+            <section class="dashboard-section" aria-labelledby="tituloOcupacaoTurmas">
+                <h2 id="tituloOcupacaoTurmas">Ocupação das turmas</h2>
+
+                <div class="table-wrapper" id="tabelaTurmasWrapper" hidden>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Turma</th>
+                                <th scope="col">Curso</th>
+                                <th scope="col">Educador</th>
+                                <th scope="col">Horário</th>
+                                <th scope="col">Ocupação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaResumoTurmas"></tbody>
+                    </table>
+                </div>
+
+                <div class="state-box" id="semTurmasBox" hidden>
+                    <p>Nenhuma turma cadastrada no banco ainda.</p>
+                </div>
+            </section>
+
+            <section class="dashboard-section" aria-labelledby="tituloUltimasMatriculas">
+                <h2 id="tituloUltimasMatriculas">Últimas matrículas realizadas</h2>
+
+                <div class="table-wrapper" id="tabelaMatriculasWrapper" hidden>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">RA</th>
+                                <th scope="col">Aluno</th>
+                                <th scope="col">Turma(s)</th>
+                                <th scope="col">Última atualização</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaUltimasMatriculas"></tbody>
+                    </table>
+                </div>
+
+                <div class="state-box" id="semMatriculasBox" hidden>
+                    <p>Nenhuma matrícula ativa registrada ainda.</p>
+                </div>
             </section>
 
         </main>
 
     </div>
 
-    <script src="dashboard-equipe.js"></script>
+    <script src="utilitarios.js?v=2"></script>
+    <script src="dashboard-equipe.js?v=2"></script>
 
 </body>
 </html>
