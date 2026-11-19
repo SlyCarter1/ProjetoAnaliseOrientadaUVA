@@ -6,6 +6,28 @@
     <title>Campanhas e Doações | EduMais Connect</title>
 
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .progresso-campanha {
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+        .barra-progresso {
+            width: 100%;
+            max-width: 180px;
+            height: 7px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .barra-progresso-preenchida {
+            height: 100%;
+            background: #194d78;
+            border-radius: 999px;
+            transition: width 0.2s ease;
+        }
+    </style>
 </head>
 
 <body class="dashboard-page">
@@ -58,12 +80,12 @@
             <header class="dashboard-header">
                 <div>
                     <h1>Campanhas e Arrecadações</h1>
-                    <p>Cadastre campanhas de doação, defina metas e acompanhe o progresso dos recursos.</p>
+                    <p>Cadastre campanhas de doação, atualize valores arrecadados e gerencie o status das metas.</p>
                 </div>
             </header>
 
-            <section class="form-card" aria-labelledby="tituloNovaCampanha">
-                <h2 id="tituloNovaCampanha">Nova campanha</h2>
+            <section class="form-card" aria-labelledby="tituloFormCampanha">
+                <h2 id="tituloFormCampanha">Nova campanha</h2>
 
                 <form id="campanhaForm" novalidate>
                     <div class="form-grid">
@@ -82,10 +104,25 @@
                             <p class="field-error" id="erroMeta"></p>
                         </div>
 
+                        <div class="form-field" id="campoArrecadadoWrapper" hidden>
+                            <label for="campanhaArrecadado">Valor arrecadado (R$)</label>
+                            <input type="number" id="campanhaArrecadado" min="0" step="0.01" inputmode="decimal"
+                                   aria-describedby="erroArrecadado" placeholder="Ex.: 1250.00">
+                            <p class="field-error" id="erroArrecadado"></p>
+                        </div>
+
                         <div class="form-field">
                             <label for="campanhaPrazo">Prazo final</label>
                             <input type="date" id="campanhaPrazo" required aria-describedby="erroPrazo">
                             <p class="field-error" id="erroPrazo"></p>
+                        </div>
+
+                        <div class="form-field" id="campoStatusWrapper" hidden>
+                            <label for="campanhaStatus">Status da campanha</label>
+                            <select id="campanhaStatus">
+                                <option value="em_andamento">Em andamento</option>
+                                <option value="encerrada">Encerrada</option>
+                            </select>
                         </div>
 
                         <div class="form-field" style="grid-column: 1 / -1;">
@@ -98,14 +135,15 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="primary-button">Cadastrar campanha</button>
+                        <button type="submit" class="primary-button" id="btnSalvarCampanha">Cadastrar campanha</button>
+                        <button type="button" class="table-button" id="btnCancelarEdicao" hidden>Cancelar edição</button>
                         <p class="form-message" id="campanhaMensagem" role="status"></p>
                     </div>
                 </form>
             </section>
 
             <section class="dashboard-section" aria-labelledby="tituloLista">
-                <h2 id="tituloLista">Campanhas ativas</h2>
+                <h2 id="tituloLista">Campanhas cadastradas</h2>
 
                 <form class="toolbar" id="buscaForm" role="search">
                     <div class="toolbar-field">
@@ -123,9 +161,10 @@
                         <thead>
                             <tr>
                                 <th scope="col">Campanha</th>
-                                <th scope="col">Meta</th>
+                                <th scope="col">Arrecadado / Meta</th>
                                 <th scope="col">Prazo</th>
                                 <th scope="col">Status</th>
+                                <th scope="col">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="listaCampanhas"></tbody>

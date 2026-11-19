@@ -26,6 +26,43 @@
             display: flex;
             gap: 8px;
         }
+        .presenca-ok {
+            color: #166534;
+            background: #dcfce7;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+        .presenca-falta {
+            color: #991b1b;
+            background: #fee2e2;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+        .resumo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .resumo-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+        .resumo-card strong {
+            display: block;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+        .resumo-card span {
+            font-size: 0.88rem;
+            color: #475569;
+        }
     </style>
 </head>
 
@@ -79,12 +116,12 @@
             <header class="dashboard-header">
                 <div>
                     <h1>Controle de Frequência</h1>
-                    <p>Selecione a turma e a data para registrar ou consultar a presença dos alunos.</p>
+                    <p>Registre a chamada diária ou consulte o histórico de presenças e faltas por turma, aluno e período.</p>
                 </div>
             </header>
 
             <section class="form-card" aria-labelledby="tituloSelecao">
-                <h2 id="tituloSelecao">Selecionar aula</h2>
+                <h2 id="tituloSelecao">Selecionar aula para chamada</h2>
 
                 <form id="selecaoForm">
                     <div class="form-grid">
@@ -160,6 +197,71 @@
                 <h2>Não foi possível carregar os dados</h2>
                 <p>Verifique se o servidor Python (porta 8001) e o PostgreSQL estão ativos.</p>
             </div>
+
+            <section class="form-card" aria-labelledby="tituloConsultaPresenca" style="margin-top: 2rem;">
+                <h2 id="tituloConsultaPresenca">Consultar histórico de presença</h2>
+
+                <form id="consultaPresencaForm">
+                    <div class="form-grid">
+
+                        <div class="form-field">
+                            <label for="consultaTurma">Turma</label>
+                            <select id="consultaTurma">
+                                <option value="">Todas as turmas</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="consultaAluno">Aluno</label>
+                            <select id="consultaAluno">
+                                <option value="">Todos os alunos</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="consultaDataInicio">Data inicial</label>
+                            <input type="date" id="consultaDataInicio">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="consultaDataFim">Data final</label>
+                            <input type="date" id="consultaDataFim">
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">Consultar presença</button>
+                        <button type="button" class="table-button" id="btnLimparConsulta">Limpar filtros</button>
+                    </div>
+                </form>
+
+                <div id="resultadoConsultaPresenca" style="margin-top: 1.25rem;" hidden>
+                    <p class="results-summary" id="resumoConsultaPresenca" aria-live="polite"></p>
+                    <div class="resumo-grid" id="cardsTaxaPresenca"></div>
+
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <caption class="sr-only">Histórico de presenças e faltas</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Data</th>
+                                    <th scope="col">RA</th>
+                                    <th scope="col">Aluno</th>
+                                    <th scope="col">Turma</th>
+                                    <th scope="col" class="text-center">Situação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaHistoricoPresenca"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="state-box" id="estadoSemHistorico" hidden>
+                    <h2>Nenhum registro de presença encontrado</h2>
+                    <p>Não há chamadas registradas para os filtros selecionados.</p>
+                </div>
+            </section>
 
         </main>
 

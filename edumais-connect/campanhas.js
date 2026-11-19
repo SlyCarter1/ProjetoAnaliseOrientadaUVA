@@ -1,21 +1,29 @@
 // campanhas.js
 // Tela de campanhas e arrecadações integrada ao PostgreSQL via FastAPI.
-// Depende apenas de utilitarios.js.
+// Suporta cadastro, edição com valor arrecadado e alteração de status.
 
 const usuarioEquipe = exigirEquipe();
 const API_BASE = "http://localhost:8001";
 
+const tituloFormCampanha = document.getElementById("tituloFormCampanha");
 const campanhaForm = document.getElementById("campanhaForm");
 const nomeInput = document.getElementById("campanhaNome");
 const metaInput = document.getElementById("campanhaMeta");
+const arrecadadoWrapper = document.getElementById("campoArrecadadoWrapper");
+const arrecadadoInput = document.getElementById("campanhaArrecadado");
 const prazoInput = document.getElementById("campanhaPrazo");
+const statusWrapper = document.getElementById("campoStatusWrapper");
+const statusSelect = document.getElementById("campanhaStatus");
 const descricaoInput = document.getElementById("campanhaDescricao");
 
 const erroNome = document.getElementById("erroNome");
 const erroMeta = document.getElementById("erroMeta");
+const erroArrecadado = document.getElementById("erroArrecadado");
 const erroPrazo = document.getElementById("erroPrazo");
 const erroDescricao = document.getElementById("erroDescricao");
 const campanhaMensagem = document.getElementById("campanhaMensagem");
+const btnSalvarCampanha = document.getElementById("btnSalvarCampanha");
+const btnCancelarEdicao = document.getElementById("btnCancelarEdicao");
 
 const buscaForm = document.getElementById("buscaForm");
 const buscaInput = document.getElementById("buscaCampanha");
@@ -28,6 +36,7 @@ const estadoSemResultado = document.getElementById("estadoSemResultado");
 const estadoErro = document.getElementById("estadoErro");
 
 let campanhas = [];
+let campanhaEmEdicaoId = null;
 
 async function carregarCampanhas() {
     const res = await fetch(`${API_BASE}/campanhas`);
@@ -36,14 +45,17 @@ async function carregarCampanhas() {
 }
 
 function formatarMoeda(valor) {
-    return Number(valor).toLocaleString("pt-BR", {
+    return Number(valor || 0).toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL"
     });
 }
 
-function verificarStatus(prazo) {
-    const dataStr = String(prazo || "").split("T")[0];
+function obterStatusInfo(campanha) {
+    if (campanha.status === "encerrada") {
+        return { texto: "Encerrada", classe: "badge-encerrada" };
+    }
+    const dataStr = String(campanha.prazo || "").split("T")[0];
     const hoje = new Date().toISOString().split("T")[0];
     if (dataStr && dataStr < hoje) {
         return { texto: "Encerrada", classe: "badge-encerrada" };
@@ -63,6 +75,39 @@ function criarCelula(texto) {
     return celula;
 }
 
+function iniciarEdicao(campanha) {
+    campanhaEmEdicaoId = campanha.campanha_id;
+    tituloFormCampanha.textContent = `Editando: ${valorOuPadrao(campanha.nome)}`;
+    arrecadadoWrapper.hidden = false;
+    statusWrapper.hidden = false;
+    btnCancelarEdicao.hidden = false;
+    btnSalvarCampanha.textContent = "Salvar alterações";
+    campanhaMensagem.textContent = "";
+
+    nomeInput.value = campanha.nome || "";
+    metaInput.value = Number(campanha.meta || 0);
+    arrecadadoInput.value = Number(campanha.arrecadado || 0);
+    prazoInput.value = String(campanha.prazo || "").split("T")[0];
+    statusSelect.value = campanha.status === "encerrada" ? "encerrada" : "em_andamento";
+    descricaoInput.value = campanha.descricao || "";
+
+    limparErros();
+    nomeInput.focus();
+    campanhaForm.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function cancelarEdicao() {
+    campanhaEmEdicaoId = null;
+    tituloFormCampanha.textContent = "Nova campanha";
+    arrecadadoWrapper.hidden = true;
+    statusWrapper.hidden = true;
+    btnCancelarEdicao.hidden = true;
+    btnSalvarCampanha.textContent = "Cadastrar campanha";
+    campanhaForm.reset();
+    statusSelect.value = "em_andamento";
+    limparErros();
+}
+
 function criarLinha(campanha) {
     const linha = document.createElement("tr");
 
@@ -77,16 +122,45 @@ function criarLinha(campanha) {
     }
     linha.appendChild(celulaNome);
 
-    linha.appendChild(criarCelula(formatarMoeda(campanha.meta)));
+    const arrecadado = Number(campanha.arrecadado || 0);
+    const meta = Number(campanha.meta || 0);
+    const pct = meta > 0 ? Math.min(100, Math.round((arrecadado / meta) * 100)) : 0;
+
+    const celulaValores = document.createElement("td");
+    celulaValores.textContent = `${formatarMoeda(arrecadado)} / ${formatarMoeda(meta)}`;
+
+    const infoPct = document.createElement("div");
+    infoPct.className = "progresso-campanha";
+    infoPct.textContent = `${pct}% da meta`;
+
+    const barra = document.createElement("div");
+    barra.className = "barra-progresso";
+    const preenchida = document.createElement("div");
+    preenchida.className = "barra-progresso-preenchida";
+    preenchida.style.width = `${pct}%`;
+    barra.appendChild(preenchida);
+
+    celulaValores.append(infoPct, barra);
+    linha.appendChild(celulaValores);
+
     linha.appendChild(criarCelula(formatarData(campanha.prazo)));
 
-    const statusInfo = verificarStatus(campanha.prazo);
+    const statusInfo = obterStatusInfo(campanha);
     const celulaStatus = document.createElement("td");
     const badge = document.createElement("span");
     badge.className = `status-badge ${statusInfo.classe}`;
     badge.textContent = statusInfo.texto;
     celulaStatus.appendChild(badge);
     linha.appendChild(celulaStatus);
+
+    const celulaAcoes = document.createElement("td");
+    const btnEditar = document.createElement("button");
+    btnEditar.type = "button";
+    btnEditar.className = "table-button";
+    btnEditar.textContent = "Editar";
+    btnEditar.addEventListener("click", () => iniciarEdicao(campanha));
+    celulaAcoes.appendChild(btnEditar);
+    linha.appendChild(celulaAcoes);
 
     return linha;
 }
@@ -125,6 +199,7 @@ function limparErros() {
     [
         [erroNome, nomeInput],
         [erroMeta, metaInput],
+        [erroArrecadado, arrecadadoInput],
         [erroPrazo, prazoInput],
         [erroDescricao, descricaoInput]
     ].forEach(([erro, campo]) => {
@@ -134,6 +209,11 @@ function limparErros() {
 }
 
 function configurarFormulario() {
+    btnCancelarEdicao.addEventListener("click", () => {
+        campanhaMensagem.textContent = "";
+        cancelarEdicao();
+    });
+
     campanhaForm.addEventListener("submit", async (evento) => {
         evento.preventDefault();
         campanhaMensagem.textContent = "";
@@ -141,7 +221,9 @@ function configurarFormulario() {
 
         const nomeVal = nomeInput.value.trim();
         const metaVal = parseFloat(metaInput.value);
+        const arrecadadoVal = campanhaEmEdicaoId ? parseFloat(arrecadadoInput.value) : 0;
         const prazoVal = prazoInput.value;
+        const statusVal = campanhaEmEdicaoId ? statusSelect.value : "em_andamento";
         const descricaoVal = descricaoInput.value.trim();
 
         let valido = true;
@@ -154,6 +236,11 @@ function configurarFormulario() {
         if (isNaN(metaVal) || metaVal <= 0) {
             erroMeta.textContent = "Informe um valor de meta válido.";
             metaInput.setAttribute("aria-invalid", "true");
+            valido = false;
+        }
+        if (campanhaEmEdicaoId && (isNaN(arrecadadoVal) || arrecadadoVal < 0)) {
+            erroArrecadado.textContent = "Informe um valor arrecadado válido (0 ou maior).";
+            arrecadadoInput.setAttribute("aria-invalid", "true");
             valido = false;
         }
         if (!prazoVal) {
@@ -174,15 +261,30 @@ function configurarFormulario() {
         }
 
         try {
-            const res = await fetch(`${API_BASE}/campanhas`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
+            const url = campanhaEmEdicaoId
+                ? `${API_BASE}/campanhas/${campanhaEmEdicaoId}`
+                : `${API_BASE}/campanhas`;
+            const method = campanhaEmEdicaoId ? "PUT" : "POST";
+            const payload = campanhaEmEdicaoId
+                ? {
+                    nome: nomeVal,
+                    meta: metaVal,
+                    arrecadado: arrecadadoVal,
+                    prazo: prazoVal,
+                    descricao: descricaoVal,
+                    status: statusVal
+                }
+                : {
                     nome: nomeVal,
                     meta: metaVal,
                     prazo: prazoVal,
                     descricao: descricaoVal
-                })
+                };
+
+            const res = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
             });
             const dados = await res.json();
 
@@ -192,10 +294,8 @@ function configurarFormulario() {
                 return;
             }
 
-            campanhaForm.reset();
-            limparErros();
-
-            campanhaMensagem.textContent = dados.mensagem || "Campanha cadastrada com sucesso!";
+            cancelarEdicao();
+            campanhaMensagem.textContent = dados.mensagem || "Campanha salva com sucesso!";
             campanhaMensagem.className = "form-message success";
 
             campanhas = await carregarCampanhas();
