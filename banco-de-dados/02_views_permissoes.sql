@@ -57,7 +57,7 @@ GRANT SELECT ON consulta.vw_consulta_gerencial, consulta.vw_matriculas_equipe TO
 -- Aplicação: executa operações permitidas por funções sem acesso dierto a tabelas.COMMENT
 
 GRANT USAGE ON SCHEMA edumais TO edumais_app;
-GRANT EXECUTE ON FUCTION edumais.matricular(bigint, bigint) TO edumais_app;
+GRANT EXECUTE ON FUNCTION edumais.matricular(bigint, bigint) TO edumais_app;
 GRANT EXECUTE ON FUNCTION edumais.cancelar_matricula(bigint) TO edumais_app;
 
 -- A criação de pessaos / turmas precisa de operações equivalentes no backend, com validações; não conceda escrita genérica ao agente de IA
